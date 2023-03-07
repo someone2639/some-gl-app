@@ -112,7 +112,8 @@ void render() {
     extern Object2639 Title_Obj;
     Object2639_Render(&Title_Obj);
 
-    glEnable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
+    // glCullFace(0);
     glDisable(GL_BLEND);
 
     gl_context_end();
