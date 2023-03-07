@@ -1,10 +1,16 @@
 BUILD_DIR=build
+
 include $(N64_INST)/include/n64.mk
+N64_CFLAGS += -Iinclude/
+N64_CFLAGS += -Wno-missing-braces
+N64_CFLAGS += -Wno-int-conversion
 
-src = gldemo.c
+src = $(wildcard *.c)
 assets_png = $(wildcard assets/*.png)
+assets_ttf = $(wildcard assets/*.ttf)
 
-assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite)))
+assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite))) \
+			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64)))
 
 MKSPRITE_FLAGS ?=
 
@@ -12,6 +18,11 @@ all: gldemo.z64
 
 test: gldemo.z64
 	ares $<
+
+filesystem/%.font64: assets/%.ttf
+	@mkdir -p $(dir $@)
+	@echo "    [FONT] $@"
+	@$(N64_MKFONT) $(MKFONT_FLAGS) -o filesystem "$<"
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
@@ -30,3 +41,5 @@ clean:
 -include $(wildcard $(BUILD_DIR)/*.d)
 
 .PHONY: all clean
+
+print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true

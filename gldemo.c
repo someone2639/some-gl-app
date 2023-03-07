@@ -5,6 +5,15 @@
 #include <malloc.h>
 #include <math.h>
 
+
+#include "2639_defs.h"
+#include "camera.h"
+
+rdpq_font_t *fnt1;
+
+struct controller_data gPressedButtons;
+struct controller_data gHeldButtons;
+
 static surface_t zbuffer;
 
 static const GLfloat environment_color[] = { 0.1f, 0.03f, 0.2f, 1.f };
@@ -15,8 +24,9 @@ void load_texture(GLenum target, sprite_t *sprite) {
 }
 
 GLuint tex[1];
+sprite_t *sprite;
 void load_tex(char *path) {
-    sprite_t *sprite = sprite_load(path);
+    sprite = sprite_load(path);
 
 
     glGenTextures(1, tex);
@@ -37,15 +47,19 @@ void draw_quad() {
         glNormal3f(0, 1, 0);
         glTexCoord2f(0, 0);
         
+        glColor3f(1, 0, 0);
         glVertex3f(-0.5f, 0, -0.5f);
 
         glTexCoord2f(0, 1);
+        glColor3f(0, 1, 0);
         glVertex3f(-0.5f, 0, 0.5f);
 
         glTexCoord2f(1, 0);
+        glColor3f(0, 0, 1);
         glVertex3f(0.5f, 0, -0.5f);
 
         glTexCoord2f(1, 1);
+        glColor3f(1, 1, 1);
         glVertex3f(0.5f, 0, 0.5f);
     glEnd();
 }
@@ -76,35 +90,17 @@ void render() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(
-        1, 1, 0,
-        0, 0, 0,
-        0, 1, 0);
+
+    CameraUpdate();
+    // gluLookAt(
+    //     1, 1, 0,
+    //     0, 0, 0,
+    //     0, 1, 0);
     glRotatef(0, 0, 1, 0);
 
-    // static const GLfloat light_pos[][4] = {
-    //     { 1, 0, 0, 0 },
-    // };
-
-    // static const GLfloat light_diffuse[][4] = {
-    //     { 1.0f, 0.0f, 0.0f, 1.0f },
-    // };
-
-    // float light_radius = 10.0f;
-
-    // glEnable(GL_LIGHT0);
-    // glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse[0]);
-    // glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 2.0f/light_radius);
-    // glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f/(light_radius*light_radius));
-
-    // glEnable(GL_LIGHTING);
-    // GLfloat mat_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    // glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mat_diffuse);
-
     // color part (not relevant)
-    // glEnable(GL_COLOR_MATERIAL);
-    // glColor3f(1, 0, 0);
-    // texture part
+    glEnable(GL_COLOR_MATERIAL);
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex[0]);
 
@@ -114,6 +110,47 @@ void render() {
     glDisable(GL_BLEND);
 
     gl_context_end();
+
+
+    // surface_t src = surface_make(Surface.buffer, FMT_CI8, Surface.width, Surface.height, Surface.width);
+    surface_t troll = sprite_get_pixels(sprite);
+    uint16_t *troll_pal = sprite_get_palette(&troll);
+        // rdpq_attach(disp);
+            rdpq_set_mode_copy(false);
+            rdpq_tex_load_tlut(troll_pal, 0, 256);
+            rdpq_tex_blit(&troll, 10, 0, NULL);
+        // rdpq_detach_show();
+
+        rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
+
+        char buf[30];
+        sprintf(buf, "%f %f %f",
+            sCameraSpot.x,
+            sCameraSpot.y,
+            sCameraSpot.z
+            );
+
+        char buf2[30];
+        sprintf(buf2, "%f %f %f",
+            sCameraRPY.roll,
+            sCameraRPY.pitch,
+            sCameraRPY.yaw
+            );
+
+
+        char buf3[30];
+        sprintf(buf3, "%d %d", ContRead(0, x), ContRead(0, y));
+
+        rdpq_font_position(20, 50);
+        rdpq_font_print(fnt1, buf);
+
+        rdpq_font_position(20, 70);
+        rdpq_font_print(fnt1, buf2);
+        rdpq_font_position(20, 90);
+        rdpq_font_print(fnt1, buf3);
+
+        rdpq_font_end();
+
 
     rdpq_detach_show();
 }
@@ -136,8 +173,27 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_NORMALIZE);
     glDisable(GL_LIGHTING);
-    load_tex("rom:/vend1.sprite");
+    load_tex("rom:/soda_label.sprite");
+
+    fnt1 = rdpq_font_load("rom:/Pacifico.font64");
+
     while (1) {
+        surface_t *screen;
+        while (!(screen = display_lock())) {}
+
+        rdpq_attach(screen, NULL);
+
+        
+
+        rdpq_detach_show();
+        break;
+    }    
+    while (1) {
+        controller_scan();
+        gPressedButtons = get_keys_pressed();
+        gHeldButtons = get_keys_down();
+
+
         render();
     }
 }
