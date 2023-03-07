@@ -10,7 +10,8 @@
 // #include "controller.h"
 
 
-#define MV_SPD 6.0f
+#define MV_SPD 1.0f
+#define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
 #define clampA(x) if ((x) > ANG_CLMP) {(x) = ANG_CLMP;}
 #define clampAN(x) if ((x) < -ANG_CLMP) {(x) = -ANG_CLMP;}
@@ -84,7 +85,6 @@ void CameraApproach(void) {
     VectorApproach(&sCameraRPY, &sCameraRPY_Target, 0.2f);
 }
 
-
 void CameraApply_RPY(void) {
     VectorExtend(&sCameraLook_Target, &sCameraSpot, 500.0f, sCameraRPY.pitch * (M_PI / 180.0f),
         (M_PI / 180.0f) * (sCameraRPY.yaw)
@@ -99,15 +99,15 @@ void CameraPosApply(Vector *v, f32 dist, f32 yaw, f32 pitch) {
 }
 
 static void CameraUpdate_Free(void) {
-    if (abs(ContRead(0, x)) >= 14) {
-        if (ContRead(0, x) > 0) {
+    if (abs(ContReadHeld(0, x)) >= 14) {
+        if (ContReadHeld(0, x) > 0) {
             CameraPosApply(&sCameraSpot_Target, -MV_SPD, sCameraRPY.yaw + 90, sCameraRPY.pitch);
         } else {
             CameraPosApply(&sCameraSpot_Target, MV_SPD, sCameraRPY.yaw + 90, sCameraRPY.pitch);
         }
     }
-    if (abs(ContRead(0, y)) >= 14) {
-        if (ContRead(0, y) > 0) {
+    if (abs(ContReadHeld(0, y)) >= 14) {
+        if (ContReadHeld(0, y) > 0) {
             CameraPosApply(&sCameraSpot_Target, MV_SPD, sCameraRPY.yaw, sCameraRPY.pitch);
         } else {
             CameraPosApply(&sCameraSpot_Target, -MV_SPD, sCameraRPY.yaw, sCameraRPY.pitch);

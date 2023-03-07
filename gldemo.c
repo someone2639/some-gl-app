@@ -7,6 +7,7 @@
 
 
 #include "2639_defs.h"
+#include "Object2639.h"
 #include "camera.h"
 
 rdpq_font_t *fnt1;
@@ -93,18 +94,23 @@ void render() {
 
     CameraUpdate();
     // gluLookAt(
-    //     1, 1, 0,
+    //     -10, 0, 0,
     //     0, 0, 0,
     //     0, 1, 0);
     glRotatef(0, 0, 1, 0);
+    // glScalef(2, 2, 2);
 
     // color part (not relevant)
-    glEnable(GL_COLOR_MATERIAL);
+    // glEnable(GL_COLOR_MATERIAL);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    // glEnable(GL_TEXTURE_2D);
+    // glBindTexture(GL_TEXTURE_2D, tex[0]);
 
-    draw_quad();
+    // draw_quad();
+
+
+    extern Object2639 Title_Obj;
+    Object2639_Render(&Title_Obj);
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
@@ -173,7 +179,7 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_NORMALIZE);
     glDisable(GL_LIGHTING);
-    load_tex("rom:/soda_label.sprite");
+    load_tex("rom:/vend1.sprite");
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
 

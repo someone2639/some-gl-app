@@ -8431,20 +8431,22 @@ gtGfx Title_GfxList[] = {
     },
 };
 
-// Object2639 Title_Obj = {
-//     {325, 0, 1000},
-//     {90, 180, 0},
-//     {1.0, 1.0, 1.0},
+Object2639 Title_Obj = {
+    {325, 0, 1000},
+    {90, 180, 0},
+    {1.0, 1.0, 1.0},
 
 
-//     82, // gfxlist count
-//     &Title_GfxList, // gfxlist name
+    82, // gfxlist count
+    &Title_GfxList, // gfxlist name
 
-//     MATERIAL_TEXTURE,
-//     {G_IM_FMT_RGBA, G_IM_SIZ_16b, 64, 32},
-//     NULL,
+    // MATERIAL_TEXTURE,
+    // {G_IM_FMT_RGBA, G_IM_SIZ_16b, 64, 32},
+    0,
+    {0, 0, 0, 0},
+    NULL,
 
-//     NULL,
-//     NULL,
-// };
+    NULL,
+    NULL,
+};
 
