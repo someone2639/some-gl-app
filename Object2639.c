@@ -10,46 +10,29 @@
 #include "Object2639.h"
 #include "camera.h"
 
+static void VtxConv(Vtx *v) {
+    #define VCONV(s105) (((float)(s105))/32.0f)
+    glColor3f(
+        v->v.cn[0] / 255.0f,
+        v->v.cn[1] / 255.0f,
+        v->v.cn[2] / 255.0f
+    );
+    glVertex3f(
+        VCONV(v->v.ob[0]),
+        VCONV(v->v.ob[1]),
+        VCONV(v->v.ob[2])
+    );
+}
 
 static void Triangle(Vtx *vlist, gtTriN *t) {
     Vtx *v0 = &vlist[t->v0];
     Vtx *v1 = &vlist[t->v1];
     Vtx *v2 = &vlist[t->v2];
-    #define VCONV(s105) (((float)(s105))/32.0f)
 
 
-    glColor3f(
-        v0->v.cn[0] / 255.0f,
-        v0->v.cn[1] / 255.0f,
-        v0->v.cn[2] / 255.0f
-    );
-    glVertex3f(
-        VCONV(v0->v.ob[0]),
-        VCONV(v0->v.ob[1]),
-        VCONV(v0->v.ob[2])
-    );
-
-    glColor3f(
-        v1->v.cn[0] / 255.0f,
-        v1->v.cn[1] / 255.0f,
-        v1->v.cn[2] / 255.0f
-    );
-    glVertex3f(
-        VCONV(v1->v.ob[0]),
-        VCONV(v1->v.ob[1]),
-        VCONV(v1->v.ob[2])
-    );
-
-    glColor3f(
-        v2->v.cn[0] / 255.0f,
-        v2->v.cn[1] / 255.0f,
-        v2->v.cn[2] / 255.0f
-    );
-    glVertex3f(
-        VCONV(v2->v.ob[0]),
-        VCONV(v2->v.ob[1]),
-        VCONV(v2->v.ob[2])
-    );
+    VtxConv(v0);
+    VtxConv(v1);
+    VtxConv(v2);
 }
 
 static void _processSegment(gtGfx *g) {
