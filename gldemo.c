@@ -74,6 +74,11 @@ void draw_quad() {
     glPopMatrix();
 }
 
+extern Object2639 Title_Obj;
+    extern Object2639 Test_Obj;
+
+GLuint _list;
+
 void render() {
     surface_t *disp;
     RSP_WAIT_LOOP(200) {
@@ -115,17 +120,14 @@ void render() {
     // glEnable(GL_TEXTURE_2D);
     // glBindTexture(GL_TEXTURE_2D, tex[0]);
 
-    extern Object2639 Title_Obj;
-    extern Object2639 Test_Obj;
-
 
     // draw_quad();
-    Object2639_Render(&Title_Obj);
+    Object2639_RenderList(_list, &Title_Obj);
     // Object2639_Render(&Test_Obj);
 
 
 
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     // glCullFace(0);
     glDisable(GL_BLEND);
 
@@ -207,7 +209,11 @@ int main() {
 
         rdpq_detach_show();
         break;
-    }    
+    }
+
+    _list = glGenLists(1);
+    Object2639_Register(_list, &Title_Obj);
+
     while (1) {
         controller_scan();
         gPressedButtons = get_keys_pressed();

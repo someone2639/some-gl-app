@@ -19,8 +19,8 @@
 
 Vector sCameraLook = {0, 0, 0};
 Vector sCameraLook_Target = {0, 0, 0};
-Vector sCameraSpot = {0, 325, 970};
-Vector sCameraSpot_Target = {0, 325, 970};
+Vector sCameraSpot = {0, 425, 970};
+Vector sCameraSpot_Target = {0, 425, 970};
 // Vector sCameraSpot = {0};
 // Vector sCameraSpot_Target = {0};
 Vector sCameraRPY  = {0, 0, 0};
