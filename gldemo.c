@@ -92,7 +92,7 @@ void render() {
 
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
     float near_plane = 1.0f;
-    float far_plane = 50.0f;
+    float far_plane = 200.0f;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
@@ -116,10 +116,12 @@ void render() {
     // glBindTexture(GL_TEXTURE_2D, tex[0]);
 
     extern Object2639 Title_Obj;
+    extern Object2639 Test_Obj;
 
-    
-    draw_quad();
+
+    // draw_quad();
     Object2639_Render(&Title_Obj);
+    // Object2639_Render(&Test_Obj);
 
 
 

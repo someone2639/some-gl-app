@@ -20,7 +20,7 @@
 Vector sCameraLook = {0, 0, 0};
 Vector sCameraLook_Target = {0, 0, 0};
 Vector sCameraSpot = {0, 325, 970};
-Vector sCameraSpot_Target = {0, 350, 970};
+Vector sCameraSpot_Target = {0, 325, 970};
 // Vector sCameraSpot = {0};
 // Vector sCameraSpot_Target = {0};
 Vector sCameraRPY  = {0, 0, 0};
@@ -156,15 +156,6 @@ void CameraUpdate() {
 
     CameraUpdate_Free();
 
-    gluLookAt(
-        sCameraSpot.x, sCameraSpot.y, sCameraSpot.z,
-        sCameraLook.x, sCameraLook.y, sCameraLook.z,
-        0,1,0
-    );
-}
-
-
-
     // switch (gCameraMode) {
     //     case CAMERA_STATIC: CameraApply_RPY(); break;
     //     case CAMERA_FREEMOVE: CameraUpdate_Free(); break;
@@ -173,3 +164,11 @@ void CameraUpdate() {
     //     // something else is setting the lookat matrix so we dont care
     //     case CAMERA_OBJECTMOVE: break;
     // }
+    gluLookAt(
+        sCameraSpot.x, sCameraSpot.y, sCameraSpot.z,
+        sCameraLook.x, sCameraLook.y, sCameraLook.z,
+        0,1,0
+    );
+}
+
+
