@@ -63,8 +63,8 @@ void VectorApproach(Vector *dest, Vector *src, f32 multiplier) {
 }
 
 void VectorAngleApproach(Vector *dest, Vector *src, f32 speed) {
-    Vector subResult;
-    Vector approachResult;
+    Vector subResult = {0};
+    Vector approachResult = {0};
 
     VectorSubtract(&subResult, dest, src);
     VectorApproach(&approachResult, &subResult, speed);

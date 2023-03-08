@@ -106,6 +106,7 @@ void render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    void CameraUpdate();
     CameraUpdate();
     // gluLookAt(
     //     -10, 0, 0,
@@ -122,26 +123,24 @@ void render() {
 
 
     // draw_quad();
-    Object2639_RenderList(_list, &Title_Obj);
+    Object2639_RenderList(&Title_Obj);
     // Object2639_Render(&Test_Obj);
 
 
 
-    glEnable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
     // glCullFace(0);
     glDisable(GL_BLEND);
 
     gl_context_end();
 
 
-    // surface_t src = surface_make(Surface.buffer, FMT_CI8, Surface.width, Surface.height, Surface.width);
-    surface_t troll = sprite_get_pixels(sprite);
-    uint16_t *troll_pal = sprite_get_palette(&troll);
-        // rdpq_attach(disp);
-            rdpq_set_mode_copy(false);
-            rdpq_tex_load_tlut(troll_pal, 0, 256);
-            rdpq_tex_blit(&troll, 10, 0, NULL);
-        // rdpq_detach_show();
+    // debug sprite blit
+    // surface_t troll = sprite_get_pixels(sprite);
+    // uint16_t *troll_pal = sprite_get_palette(&troll);
+    // rdpq_set_mode_copy(false);
+    // rdpq_tex_load_tlut(troll_pal, 0, 256);
+    // rdpq_tex_blit(&troll, 10, 0, NULL);
 
         rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
 
@@ -211,8 +210,7 @@ int main() {
         break;
     }
 
-    _list = glGenLists(1);
-    Object2639_Register(_list, &Title_Obj);
+    Object2639_Register(&Title_Obj);
 
     while (1) {
         controller_scan();

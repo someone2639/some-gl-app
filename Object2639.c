@@ -61,7 +61,7 @@ void Object2639_Render(Object2639 *o) {
     glPopMatrix();
 }
 
-void Object2639_RenderList(GLuint dl, Object2639 *o) {
+void Object2639_RenderList(Object2639 *o) {
     glPushMatrix();
 
     glTranslatef(o->move.x, o->move.y, o->move.z);
@@ -70,27 +70,24 @@ void Object2639_RenderList(GLuint dl, Object2639 *o) {
     glScalef(o->scale.x, o->scale.y, o->scale.z);
 
     // new difference
-    glCallList(dl);
+    glCallLists(o->segmentCount, GL_UNSIGNED_INT, o->lists);
+    // glCallList(dl);
 
     glPopMatrix();
 }
 
-void Object2639_Register(GLuint dl, Object2639 *o) {
-    // glPushMatrix();
+void Object2639_Register(Object2639 *o) {
+    o->listStart = glGenLists(o->segmentCount);
+    o->lists = malloc(sizeof(GLuint) * o->segmentCount);
+    
 
-    // glTranslatef(o->move.x, o->move.y, o->move.z);
-    // glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
-
-    // glScalef(o->scale.x, o->scale.y, o->scale.z);
-    glNewList(dl, GL_COMPILE);
+    for (int i = 0; i < o->segmentCount; i++) {
+        o->lists[i] = o->listStart + i;
+        glNewList(o->listStart + i, GL_COMPILE);
         glBegin(GL_TRIANGLES);
-        for (int i = 0; i < o->segmentCount; i++) {
-            // this does correct glVertex3f calls
-            _processSegment(&o->modelList[i]);
-        }
+        // this does correct glVertex3f calls
+        _processSegment(&o->modelList[i]);
         glEnd();
-    glEndList();
-
-
-    // glPopMatrix();
+        glEndList();
+    }
 }

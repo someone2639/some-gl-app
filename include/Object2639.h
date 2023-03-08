@@ -1,4 +1,6 @@
 #pragma once
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include "N64Graphics.h"
 
@@ -36,4 +38,14 @@ typedef struct Object2639 {
 
     void (*init)(struct Object2639 *o);
     void (*loop)(struct Object2639 *o);
+
+
+    GLuint listStart;
+    GLuint *lists;
 } Object2639;
+
+
+
+extern void Object2639_Register(Object2639 *o);
+extern void Object2639_RenderList(Object2639 *o);
+
