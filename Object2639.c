@@ -50,14 +50,13 @@ static void _processSegment(gtGfx *g) {
 void Object2639_Render(Object2639 *o) {
     glPushMatrix();
 
-    glLoadIdentity();
-
-    glScalef(o->scale.x, o->scale.y, o->scale.z);
-    glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
     glTranslatef(o->move.x, o->move.y, o->move.z);
+    glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
+    glScalef(o->scale.x, o->scale.y, o->scale.z);
 
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < o->segmentCount; i++) {
+        // assume this does correct glVertex3f calls
         _processSegment(&o->modelList[i]);
     }
     glEnd();

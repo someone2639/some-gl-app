@@ -44,6 +44,12 @@ void load_tex(char *path) {
 
 
 void draw_quad() {
+    glPushMatrix();
+    glTranslatef(0, 325, 1000);
+    glScalef(32, 32, 32);
+
+    // // glRotatef(0, 0, 1, 0);
+
     glBegin(GL_TRIANGLE_STRIP);
         glNormal3f(0, 1, 0);
         glTexCoord2f(0, 0);
@@ -63,6 +69,9 @@ void draw_quad() {
         glColor3f(1, 1, 1);
         glVertex3f(0.5f, 0, 0.5f);
     glEnd();
+
+
+    glPopMatrix();
 }
 
 void render() {
@@ -106,11 +115,13 @@ void render() {
     // glEnable(GL_TEXTURE_2D);
     // glBindTexture(GL_TEXTURE_2D, tex[0]);
 
-    // draw_quad();
-
-
     extern Object2639 Title_Obj;
+
+    
+    draw_quad();
     Object2639_Render(&Title_Obj);
+
+
 
     glDisable(GL_CULL_FACE);
     // glCullFace(0);
