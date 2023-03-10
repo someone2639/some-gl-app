@@ -48,10 +48,6 @@ static void _processSegment(gtGfx *g) {
     glDrawElements(GL_TRIANGLES, gs->sp.triCount * 3, GL_UNSIGNED_BYTE, tris);
 }
 
-    // for (int i = 0; i < tc; i++) {
-    //     Triangle(g->obj.vtxp, &tris[i]);
-    // }
-
 void Object2639_Render(Object2639 *o) {
     glPushMatrix();
 

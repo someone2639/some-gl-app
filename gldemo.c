@@ -140,7 +140,7 @@ void render() {
 
 
 
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
 
@@ -197,7 +197,7 @@ int main() {
     controller_init();
 
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_NORMALIZE);
     glDisable(GL_LIGHTING);
 
