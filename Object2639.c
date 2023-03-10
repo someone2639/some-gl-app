@@ -42,7 +42,13 @@ static void _processSegment(gtGfx *g) {
     // glEnableClientState(GL_NORMAL_ARRAY);
     // glEnableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer(3, GL_SHORT, 10, g->obj.vtxp);
+    u32 stride = 10;
+    // {
+    //     Vtx *v1 = (Vtx*)&g->obj.vtxp[1];
+    //     Vtx *v2 = (Vtx*) (((u8*)&g->obj.vtxp[0].v.flag) + stride);
+    //     assert(v1 == v2);
+    // }
+    glVertexPointer(3, GL_FLOAT, stride, g->obj.vtxp);
 
     GLubyte (*tris)[3] = g->obj.trip;
     glDrawElements(GL_TRIANGLES, gs->sp.triCount * 3, GL_UNSIGNED_BYTE, tris);
