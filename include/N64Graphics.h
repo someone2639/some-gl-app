@@ -128,7 +128,7 @@ typedef enum {
 typedef struct {
     u32 gstatep;	/* global state, usually NULL */
     gtState	*statep;	/* if this is NULL, end object processing */
-    float (*vtxp)[3];		/* if this is NULL, use points in buffer */
+    Vtx *vtxp;		/* if this is NULL, use points in buffer */
     gtTriN	*trip;		/* if this is NULL, use tris in buffer */
 } gtGfx_t;
 

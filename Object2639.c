@@ -30,10 +30,6 @@
 //     VtxConv(v2);
 // }
 
-// TODO:
-// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-// glEnableClientState(GL_NORMAL_ARRAY);
-// glEnableClientState(GL_COLOR_ARRAY);
 static void _processSegment(gtGfx *g) {
     gtState *gs = g->obj.statep;
 
@@ -42,11 +38,14 @@ static void _processSegment(gtGfx *g) {
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
+    // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    // glEnableClientState(GL_NORMAL_ARRAY);
+    // glEnableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer(gs->sp.vtxCount, GL_FLOAT, 0, g->obj.vtxp);
+    glVertexPointer(3, GL_SHORT, 10, g->obj.vtxp);
 
     GLubyte (*tris)[3] = g->obj.trip;
-    glDrawElements(GL_TRIANGLES, gs->sp.triCount, GL_UNSIGNED_BYTE, tris);
+    glDrawElements(GL_TRIANGLES, gs->sp.triCount * 3, GL_UNSIGNED_BYTE, tris);
 }
 
     // for (int i = 0; i < tc; i++) {
