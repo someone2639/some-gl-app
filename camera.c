@@ -10,7 +10,7 @@
 // #include "controller.h"
 
 
-#define MV_SPD 1.0f
+#define MV_SPD 6.0f
 #define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
 #define clampA(x) if ((x) > ANG_CLMP) {(x) = ANG_CLMP;}

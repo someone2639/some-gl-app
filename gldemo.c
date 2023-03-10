@@ -25,9 +25,9 @@ void load_texture(GLenum target, sprite_t *sprite) {
 }
 
 GLuint tex[1];
-sprite_t *sprite;
-void load_tex(char *path) {
-    sprite = sprite_load(path);
+
+sprite_t *load_tex(char *path) {
+    sprite_t *sprite = sprite_load(path);
 
 
     glGenTextures(1, tex);
@@ -40,6 +40,8 @@ void load_tex(char *path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     load_texture(GL_TEXTURE_2D, sprite);
+
+    return sprite;
 }
 
 
@@ -79,6 +81,16 @@ extern Object2639 Title_Obj;
 
 GLuint _list;
 
+void dbg_drawtex(u32 x, u32 y, char *path) {
+    sprite_t *sprite = load_tex("rom:/vend1.sprite");
+    // debug sprite blit
+    surface_t tex = sprite_get_pixels(sprite);
+    // uint16_t *tex_pal = sprite_get_palette(&tex);
+    rdpq_set_mode_copy(false);
+    // rdpq_tex_load_tlut(tex_pal, 0, 256);
+    rdpq_tex_blit(&tex, x, y, NULL);
+}
+
 void render() {
     surface_t *disp;
     RSP_WAIT_LOOP(200) {
@@ -96,8 +108,8 @@ void render() {
 
 
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 1.0f;
-    float far_plane = 200.0f;
+    float near_plane = 10.0f;
+    float far_plane = 400.0f;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
@@ -128,19 +140,13 @@ void render() {
 
 
 
-    glDisable(GL_CULL_FACE);
-    // glCullFace(0);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glDisable(GL_BLEND);
 
     gl_context_end();
 
 
-    // debug sprite blit
-    // surface_t troll = sprite_get_pixels(sprite);
-    // uint16_t *troll_pal = sprite_get_palette(&troll);
-    // rdpq_set_mode_copy(false);
-    // rdpq_tex_load_tlut(troll_pal, 0, 256);
-    // rdpq_tex_blit(&troll, 10, 0, NULL);
 
         rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
 
@@ -194,21 +200,9 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_NORMALIZE);
     glDisable(GL_LIGHTING);
-    load_tex("rom:/vend1.sprite");
+
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
-
-    while (1) {
-        surface_t *screen;
-        while (!(screen = display_lock())) {}
-
-        rdpq_attach(screen, NULL);
-
-        
-
-        rdpq_detach_show();
-        break;
-    }
 
     Object2639_Register(&Title_Obj);
 

@@ -90,8 +90,15 @@ typedef union {
 } gtStateL;
 
 typedef struct {
-    u8		v0, v1, v2, flag;	/* flag is which one for flat shade */
-} gtTriN;
+    u32 vtxCount;
+    u32 triCount;
+} PacketInfo;
+
+// typedef struct {
+//     u8		v0, v1, v2, flag;	/* flag is which one for flat shade */
+// } gtTriN;
+
+typedef GLubyte gtTriN[3];
 
 typedef enum {
     GT_CLEAR,		/* special gt mode, clears othermode state */
@@ -121,7 +128,7 @@ typedef enum {
 typedef struct {
     u32 gstatep;	/* global state, usually NULL */
     gtState	*statep;	/* if this is NULL, end object processing */
-    Vtx		*vtxp;		/* if this is NULL, use points in buffer */
+    float (*vtxp)[3];		/* if this is NULL, use points in buffer */
     gtTriN	*trip;		/* if this is NULL, use tris in buffer */
 } gtGfx_t;
 

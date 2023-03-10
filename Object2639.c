@@ -10,37 +10,48 @@
 #include "Object2639.h"
 #include "camera.h"
 
-static void VtxConv(Vtx *v) {
-    glColor3f(
-        v->v.cn[0] / 255.0f,
-        v->v.cn[1] / 255.0f,
-        v->v.cn[2] / 255.0f
-    );
-    glVertex3f(v->v.ob[0], v->v.ob[1], v->v.ob[2]);
-}
+// static void VtxConv(float v[3]) {
+//     // glColor3f(
+//     //     v->v.cn[0] / 255.0f,
+//     //     v->v.cn[1] / 255.0f,
+//     //     v->v.cn[2] / 255.0f
+//     // );
+//     glVertex3f(v[0], v[1], v[2]);
+// }
 
-static void Triangle(Vtx *vlist, gtTriN *t) {
-    Vtx *v0 = &vlist[t->v0];
-    Vtx *v1 = &vlist[t->v1];
-    Vtx *v2 = &vlist[t->v2];
+// static void Triangle(float (*vlist)[3], gtTriN t) {
+//     float *v0 = vlist[t[0]];
+//     float *v1 = vlist[t[1]];
+//     float *v2 = vlist[t[2]];
 
 
-    VtxConv(v0);
-    VtxConv(v1);
-    VtxConv(v2);
-}
+//     VtxConv(v0);
+//     VtxConv(v1);
+//     VtxConv(v2);
+// }
 
+// TODO:
+// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+// glEnableClientState(GL_NORMAL_ARRAY);
+// glEnableClientState(GL_COLOR_ARRAY);
 static void _processSegment(gtGfx *g) {
     gtState *gs = g->obj.statep;
 
-    u32 tc = gs->sp.triCount;
 
-    gtTriN *ta = g->obj.trip;
-    for (int i = 0; i < tc; i++) {
-        Triangle(g->obj.vtxp, &ta[i]);
-    }
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(gs->sp.vtxCount, GL_FLOAT, 0, g->obj.vtxp);
+
+    GLubyte (*tris)[3] = g->obj.trip;
+    glDrawElements(GL_TRIANGLES, gs->sp.triCount, GL_UNSIGNED_BYTE, tris);
 }
 
+    // for (int i = 0; i < tc; i++) {
+    //     Triangle(g->obj.vtxp, &tris[i]);
+    // }
 
 void Object2639_Render(Object2639 *o) {
     glPushMatrix();
@@ -70,24 +81,42 @@ void Object2639_RenderList(Object2639 *o) {
     glScalef(o->scale.x, o->scale.y, o->scale.z);
 
     // new difference
-    glCallLists(o->segmentCount, GL_UNSIGNED_INT, o->lists);
-    // glCallList(dl);
+    // glCallLists(o->segmentCount, GL_UNSIGNED_INT, o->lists);
+    glCallList(o->segmentCount);
 
     glPopMatrix();
 }
 
-void Object2639_Register(Object2639 *o) {
-    o->listStart = glGenLists(o->segmentCount);
-    o->lists = malloc(sizeof(GLuint) * o->segmentCount);
+// void Object2639_Register(Object2639 *o) {
+//     o->listStart = glGenLists(o->segmentCount);
+//     o->lists = malloc(sizeof(GLuint) * o->segmentCount);
     
 
+//     for (int i = 0; i < o->segmentCount; i++) {
+//         o->lists[i] = o->listStart + i;
+//         glNewList(o->listStart + i, GL_COMPILE);
+//         glBegin(GL_TRIANGLES);
+//         // this does correct glVertex3f calls
+//         _processSegment(&o->modelList[i]);
+//         glEnd();
+//         glEndList();
+//     }
+// }
+
+void Object2639_Register(Object2639 *o) {
+    // o->listStart = glGenLists(o->segmentCount);
+    // o->lists = malloc(sizeof(GLuint) * o->segmentCount);
+    
+    o->listStart = glGenLists(1);
+
+    glNewList(o->segmentCount, GL_COMPILE);
+    glBegin(GL_TRIANGLES);
     for (int i = 0; i < o->segmentCount; i++) {
-        o->lists[i] = o->listStart + i;
-        glNewList(o->listStart + i, GL_COMPILE);
-        glBegin(GL_TRIANGLES);
+        // glNewList(o->listStart + i, GL_COMPILE);
+        // o->lists[i] = o->listStart + i;
         // this does correct glVertex3f calls
         _processSegment(&o->modelList[i]);
-        glEnd();
-        glEndList();
     }
+    glEnd();
+    glEndList();
 }
