@@ -43,10 +43,10 @@ static void _processSegment(gtGfx *g) {
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glVertexPointer(gs->sp.vtxCount, GL_FLOAT, 0, g->obj.vtxp);
+    glVertexPointer(3, GL_FLOAT, 0, g->obj.vtxp);
 
     GLubyte (*tris)[3] = g->obj.trip;
-    glDrawElements(GL_TRIANGLES, gs->sp.triCount, GL_UNSIGNED_BYTE, tris);
+    glDrawElements(GL_TRIANGLES, gs->sp.triCount * 3, GL_UNSIGNED_BYTE, tris);
 }
 
     // for (int i = 0; i < tc; i++) {
