@@ -6947,7 +6947,7 @@ gtTriN Title_tris_81[] __attribute__((aligned(8))) = {
     {48, 49, 50}, {48, 50, 51},
 };
 gtState Title_State = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     62, // vtxCount  8
     0, // vtxV0 9
@@ -6965,7 +6965,7 @@ gtState Title_State = {
 
 
 gtStateL Title_StateL_0 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     63, // vtxCount  8
     0, // vtxV0 9
@@ -6977,7 +6977,7 @@ gtStateL Title_StateL_0 = {
 
 
 gtStateL Title_StateL_1 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -6989,7 +6989,7 @@ gtStateL Title_StateL_1 = {
 
 
 gtStateL Title_StateL_2 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     63, // vtxCount  8
     0, // vtxV0 9
@@ -7001,7 +7001,7 @@ gtStateL Title_StateL_2 = {
 
 
 gtStateL Title_StateL_3 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     63, // vtxCount  8
     0, // vtxV0 9
@@ -7013,7 +7013,7 @@ gtStateL Title_StateL_3 = {
 
 
 gtStateL Title_StateL_4 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     63, // vtxCount  8
     0, // vtxV0 9
@@ -7025,7 +7025,7 @@ gtStateL Title_StateL_4 = {
 
 
 gtStateL Title_StateL_5 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     63, // vtxCount  8
     0, // vtxV0 9
@@ -7037,7 +7037,7 @@ gtStateL Title_StateL_5 = {
 
 
 gtStateL Title_StateL_6 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     62, // vtxCount  8
     0, // vtxV0 9
@@ -7049,7 +7049,7 @@ gtStateL Title_StateL_6 = {
 
 
 gtStateL Title_StateL_7 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7061,7 +7061,7 @@ gtStateL Title_StateL_7 = {
 
 
 gtStateL Title_StateL_8 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7073,7 +7073,7 @@ gtStateL Title_StateL_8 = {
 
 
 gtStateL Title_StateL_9 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     62, // vtxCount  8
     0, // vtxV0 9
@@ -7085,7 +7085,7 @@ gtStateL Title_StateL_9 = {
 
 
 gtStateL Title_StateL_10 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7097,7 +7097,7 @@ gtStateL Title_StateL_10 = {
 
 
 gtStateL Title_StateL_11 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7109,7 +7109,7 @@ gtStateL Title_StateL_11 = {
 
 
 gtStateL Title_StateL_12 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7121,7 +7121,7 @@ gtStateL Title_StateL_12 = {
 
 
 gtStateL Title_StateL_13 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7133,7 +7133,7 @@ gtStateL Title_StateL_13 = {
 
 
 gtStateL Title_StateL_14 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7145,7 +7145,7 @@ gtStateL Title_StateL_14 = {
 
 
 gtStateL Title_StateL_15 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7157,7 +7157,7 @@ gtStateL Title_StateL_15 = {
 
 
 gtStateL Title_StateL_16 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7169,7 +7169,7 @@ gtStateL Title_StateL_16 = {
 
 
 gtStateL Title_StateL_17 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
@@ -7181,7 +7181,7 @@ gtStateL Title_StateL_17 = {
 
 
 gtStateL Title_StateL_18 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     62, // vtxCount  8
     0, // vtxV0 9
@@ -7193,7 +7193,7 @@ gtStateL Title_StateL_18 = {
 
 
 gtStateL Title_StateL_19 = {
-    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_TEXTURE | GT_ZBUFFER), // renderState 0
+    (GT_CULL_BACK | GT_SHADING_SMOOTH | GT_ZBUFFER), // renderState 0
     0x0, // textureState 4
     64, // vtxCount  8
     0, // vtxV0 9
