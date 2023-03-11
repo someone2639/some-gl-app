@@ -60,14 +60,31 @@ void Object2639_RenderList(Object2639 *o) {
 
     glScalef(o->scale.x, o->scale.y, o->scale.z);
 
+    if (o->texturePath != NULL) {
+        glBindTexture(GL_TEXTURE_2D, &o->_texture);
+    }
     glCallList(o->segmentCount);
 
     glPopMatrix();
 }
 
 void Object2639_Register(Object2639 *o) {
-    o->displaylist = glGenLists(1);
+    o->_displaylist = glGenLists(1);
 
+    if (o->texturePath != NULL) {
+        sprite_t *sprite = sprite_load(o->texturePath);
+        assert(sprite != NULL);
+
+
+        glGenTextures(1, o->_texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glTexImageN64(GL_TEXTURE_2D, 0, sprite);
+    }
     glNewList(o->segmentCount, GL_COMPILE);
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < o->segmentCount; i++) {

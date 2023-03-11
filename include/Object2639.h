@@ -14,33 +14,22 @@ enum Material {
 };
 
 typedef struct Object2639 {
+    // serviceable params
     Vector move;
     Vector rotate;
     Vector scale;
+    void (*init)(struct Object2639 *o);
+    void (*loop)(struct Object2639 *o);
+    char *texturePath;
 
-    // modelList[0] has the only transform in this chain
-    //  also sentinel terminated lists are cringe
+    // generated params
     u32 segmentCount;
     gtGfx *modelList;
 
-    enum Material matType;
-    // general purpose, might just be a texture pointer and params
-    union{
-        u32 matParamWord;
-        // struct {
-        //     u8 fmt;
-        //     u8 siz;
-        //     u8 wd;
-        //     u8 ht;
-        // } matParamTexProps;
-    };
-    volatile void *matPtr;
 
-    void (*init)(struct Object2639 *o);
-    void (*loop)(struct Object2639 *o);
-
-
-    GLuint displaylist;
+    // internal params
+    GLuint _displaylist;
+    GLuint _texture[1];
 } Object2639;
 
 

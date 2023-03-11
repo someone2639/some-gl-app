@@ -8432,20 +8432,13 @@ gtGfx Title_GfxList[] = {
 };
 
 Object2639 Title_Obj = {
-    {0, 325, 1000},
-    {90, 180, 0},
-    {1.0, 1.0, 1.0},
+    .move = {0, 325, 1000},
+    .rotate = {90, 180, 0},
+    .scale = {1.0, 1.0, 1.0},
 
+    .segmentCount = 82,
+    .modelList = (gtGfx*)&Title_GfxList,
 
-    82, // gfxlist count
-    (gtGfx*)&Title_GfxList, // gfxlist name
-
-    // MATERIAL_TEXTURE,
-    // {G_IM_FMT_RGBA, G_IM_SIZ_16b, 64, 32},
-    0,
-    NULL,
-
-    NULL,
-    NULL,
+    .texturePath = "rom:/vend1.sprite",
 };
 

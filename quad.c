@@ -44,22 +44,11 @@ gtGfx Test_GfxList[] = {
 };
 
 Object2639 Test_Obj = {
-    {0, 325, 1000},
-    {90, 180, 0},
-    {32.0, 32.0, 32.0},
-
-
-    2, // gfxlist count
-    (gtGfx*)&Test_GfxList, // gfxlist name
-
-    // MATERIAL_TEXTURE,
-    // {G_IM_FMT_RGBA, G_IM_SIZ_16b, 64, 32},
-    0,
-    {0},
-    NULL,
-
-    NULL,
-    NULL,
+    .move = {0, 325, 1000},
+    .rotate = {90, 180, 0},
+    .scale = {32.0, 32.0, 32.0},
+    .segmentCount = 2, // gfxlist count
+    .modelList = (gtGfx*)&Test_GfxList, // gfxlist name
 };
 
 
