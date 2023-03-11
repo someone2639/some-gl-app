@@ -44,7 +44,6 @@ void Object2639_Render(Object2639 *o) {
 
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < o->segmentCount; i++) {
-        // assume this does correct glVertex3f calls
         _processSegment(&o->modelList[i]);
     }
     glEnd();
@@ -67,17 +66,11 @@ void Object2639_RenderList(Object2639 *o) {
 }
 
 void Object2639_Register(Object2639 *o) {
-    // o->listStart = glGenLists(o->segmentCount);
-    // o->lists = malloc(sizeof(GLuint) * o->segmentCount);
-    
-    o->listStart = glGenLists(1);
+    o->displaylist = glGenLists(1);
 
     glNewList(o->segmentCount, GL_COMPILE);
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < o->segmentCount; i++) {
-        // glNewList(o->listStart + i, GL_COMPILE);
-        // o->lists[i] = o->listStart + i;
-        // this does correct glVertex3f calls
         _processSegment(&o->modelList[i]);
     }
     glEnd();

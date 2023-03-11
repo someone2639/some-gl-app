@@ -40,8 +40,7 @@ typedef struct Object2639 {
     void (*loop)(struct Object2639 *o);
 
 
-    GLuint listStart;
-    GLuint *lists;
+    GLuint displaylist;
 } Object2639;
 
 
