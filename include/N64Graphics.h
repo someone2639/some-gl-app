@@ -6,23 +6,13 @@
 
 
 typedef struct {
-    short       ob[3];  /* x, y, z */
-    unsigned short  flag;
+    float       ob[3];  /* x, y, z */
+    u32  flag;
     short       tc[2];  /* texture coord */
     unsigned char   cn[4];  /* color & alpha */
 } Vtx_t;
-
-typedef struct {
-    short       ob[3];  /* x, y, z */
-    unsigned short  flag;
-    short       tc[2];  /* texture coord */
-    signed char n[3];   /* normal */
-    unsigned char   a;      /* alpha  */
-} Vtx_tn;
-
 typedef union {
     Vtx_t       v;  /* Use this one for colors  */
-    Vtx_tn              n;  /* Use this one for normals */
     long long int   force_structure_alignment;
 } Vtx;
 
@@ -128,7 +118,7 @@ typedef enum {
 typedef struct {
     u32 gstatep;	/* global state, usually NULL */
     gtState	*statep;	/* if this is NULL, end object processing */
-    float (*vtxp)[3];		/* if this is NULL, use points in buffer */
+    Vtx *vtxp;		/* if this is NULL, use points in buffer */
     gtTriN	*trip;		/* if this is NULL, use tris in buffer */
 } gtGfx_t;
 
