@@ -38,7 +38,16 @@ void Object2639_Render(Object2639 *o) {
     glPushMatrix();
 
     glTranslatef(o->move.x, o->move.y, o->move.z);
-    glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
+
+    // if ((o->rotate.x == 0.0f)
+    //     && (o->rotate.y == 0.0f)
+    //     && (o->rotate.z == 0.0f)
+    // ) {
+
+    // } else {
+    // }
+    // TODO: have it only apply rotation if nonzero
+    // glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
 
     glScalef(o->scale.x, o->scale.y, o->scale.z);
 
@@ -56,12 +65,15 @@ void Object2639_RenderList(Object2639 *o) {
     glPushMatrix();
 
     glTranslatef(o->move.x, o->move.y, o->move.z);
-    glRotatef(0, o->rotate.x, o->rotate.y, o->rotate.z);
+
+    glRotatef(o->rotate.x, 1, 0, 0);
+    glRotatef(o->rotate.y, 0, 1, 0);
+    glRotatef(o->rotate.z, 0, 0, 1);
 
     glScalef(o->scale.x, o->scale.y, o->scale.z);
 
     if (o->texturePath != NULL) {
-        glBindTexture(GL_TEXTURE_2D, &o->_texture);
+        glBindTexture(GL_TEXTURE_2D, o->_texture[0]);
     }
     glCallList(o->segmentCount);
 
@@ -72,18 +84,19 @@ void Object2639_Register(Object2639 *o) {
     o->_displaylist = glGenLists(1);
 
     if (o->texturePath != NULL) {
-        sprite_t *sprite = sprite_load(o->texturePath);
-        assert(sprite != NULL);
-
+        o->_sprite = sprite_load(o->texturePath);
+        assert(o->_sprite != NULL);
 
         glGenTextures(1, o->_texture);
+        glBindTexture(GL_TEXTURE_2D, o->_texture[0]);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        glTexImageN64(GL_TEXTURE_2D, 0, sprite);
+        surface_t surf = sprite_get_lod_pixels(o->_sprite, 0);
+        glTexImageN64(GL_TEXTURE_2D, 0, &surf);
     }
     glNewList(o->segmentCount, GL_COMPILE);
     glBegin(GL_TRIANGLES);

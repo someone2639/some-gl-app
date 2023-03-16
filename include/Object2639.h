@@ -30,6 +30,7 @@ typedef struct Object2639 {
     // internal params
     GLuint _displaylist;
     GLuint _texture[1];
+    sprite_t *_sprite;
 } Object2639;
 
 

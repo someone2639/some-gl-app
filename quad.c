@@ -30,13 +30,11 @@ gtStateL TestState = {
 
 gtGfx Test_GfxList[] = {
     {
-        NULL,
         (gtState *)&TestState,
         TestVtx,
         TestTris,
     },
     {
-        NULL,
         (gtState *)&TestState,
         TestVtx + 4,
         TestTris_,

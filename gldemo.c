@@ -17,8 +17,6 @@ struct controller_data gHeldButtons;
 
 static surface_t zbuffer;
 
-static const GLfloat environment_color[] = { 0.1f, 0.03f, 0.2f, 1.f };
-
 void load_texture(GLenum target, sprite_t *sprite) {
     surface_t surf = sprite_get_lod_pixels(sprite, 0);
     glTexImageN64(target, 0, &surf);
@@ -104,24 +102,27 @@ void dbg_drawtex(u32 x, u32 y, char *path) {
 }
 
 void render() {
-    surface_t *disp;
-    RSP_WAIT_LOOP(200) {
-        if ((disp = display_lock())) {
-            break;
-        }
-    }
+    static const GLubyte environment_color[] = {0, 255, 229, 255};
+
+    surface_t *disp = display_get();
 
     rdpq_attach(disp, &zbuffer);
 
     gl_context_begin();
 
-    glClearColor(environment_color[0], environment_color[1], environment_color[2], environment_color[3]);
+    glClearColor(
+        environment_color[0] / 255.0f,
+        environment_color[1] / 255.0f,
+        environment_color[2] / 255.0f,
+        environment_color[3] / 255.0f
+    );
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 10.0f;
-    float far_plane = 400.0f;
+    float near_plane = 50.0f;
+    float far_plane = 2000.0f;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
@@ -132,63 +133,52 @@ void render() {
 
     void CameraUpdate();
     CameraUpdate();
-    // gluLookAt(
-    //     -10, 0, 0,
-    //     0, 0, 0,
-    //     0, 1, 0);
+
     glRotatef(0, 0, 1, 0);
-    // glScalef(2, 2, 2);
 
-    // color part (not relevant)
-    // glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_COLOR_MATERIAL);
 
-    // glEnable(GL_TEXTURE_2D);
-    // glBindTexture(GL_TEXTURE_2D, tex[0]);
-
-
-    // draw_quad();
     Object2639_RenderList(&Title_Obj);
-    // Object2639_Render(&Test_Obj);
 
 
-
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
 
     gl_context_end();
 
 
 
-        rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
+    rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
 
-        char buf[30];
-        sprintf(buf, "%f %f %f",
-            sCameraSpot.x,
-            sCameraSpot.y,
-            sCameraSpot.z
-            );
+    char buf[30];
+    sprintf(buf, "%f %f %f",
+        sCameraSpot.x,
+        sCameraSpot.y,
+        sCameraSpot.z
+        );
 
-        char buf2[30];
-        sprintf(buf2, "%f %f %f",
-            sCameraRPY.roll,
-            sCameraRPY.pitch,
-            sCameraRPY.yaw
-            );
+    char buf2[30];
+    sprintf(buf2, "%f %f %f",
+        sCameraRPY.roll,
+        sCameraRPY.pitch,
+        sCameraRPY.yaw
+        );
 
 
-        char buf3[30];
-        sprintf(buf3, "%d %d", ContRead(0, x), ContRead(0, y));
+    char buf3[30];
+    sprintf(buf3, "%d %d", ContRead(0, x), ContRead(0, y));
 
-        rdpq_font_position(20, 50);
-        rdpq_font_print(fnt1, buf);
+    rdpq_font_position(20, 50);
+    rdpq_font_print(fnt1, buf);
 
-        rdpq_font_position(20, 70);
-        rdpq_font_print(fnt1, buf2);
-        rdpq_font_position(20, 90);
-        rdpq_font_print(fnt1, buf3);
+    rdpq_font_position(20, 70);
+    rdpq_font_print(fnt1, buf2);
+    rdpq_font_position(20, 90);
+    rdpq_font_print(fnt1, buf3);
 
-        rdpq_font_end();
+    rdpq_font_end();
 
 
     rdpq_detach_show();

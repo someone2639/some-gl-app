@@ -63,19 +63,17 @@ typedef union {
     long long int	force_structure_alignment;
 } gtState;
 
-typedef struct {
-    u32		renderState;	/* render state */
-    u32		textureState;	/* texture state */
-    u8		vtxCount;	/* how many verts? */
-    u8		vtxV0;		/* where to load verts? */
-    u8		triCount;	/* how many tris? */
-    u8		flag;
-    Gfx		*rdpCmds;	/* ptr (segment address) to RDP DL */
-    Gfx		rdpOthermode;
-} gtStateL_t;
-
 typedef union {
-    gtStateL_t		sp;
+    struct {
+        u32     renderState;    /* render state */
+        u32     textureState;   /* texture state */
+        u8      vtxCount;   /* how many verts? */
+        u8      vtxV0;      /* where to load verts? */
+        u8      triCount;   /* how many tris? */
+        u8      flag;
+        Gfx     *rdpCmds;   /* ptr (segment address) to RDP DL */
+        Gfx     rdpOthermode;
+    };
     long long int	force_structure_alignment;
 } gtStateL;
 
@@ -116,7 +114,6 @@ typedef enum {
 #define gsDPEndDisplayList()	gsSPNoOp()
 
 typedef struct {
-    u32 gstatep;	/* global state, usually NULL */
     gtState	*statep;	/* if this is NULL, end object processing */
     Vtx *vtxp;		/* if this is NULL, use points in buffer */
     gtTriN	*trip;		/* if this is NULL, use tris in buffer */
