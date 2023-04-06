@@ -52,7 +52,7 @@ void Object2639::render() {
     glScalef(this->scale.x, this->scale.y, this->scale.z);
 
     glBegin(GL_TRIANGLES);
-    for (int i = 0; i < this->segmentCount; i++) {
+    for (u32 i = 0; i < this->segmentCount; i++) {
         _processSegment(&this->modelList[i]);
     }
     glEnd();
@@ -100,7 +100,7 @@ void Object2639::load() {
     }
     glNewList(this->segmentCount, GL_COMPILE);
     glBegin(GL_TRIANGLES);
-    for (int i = 0; i < this->segmentCount; i++) {
+    for (u32 i = 0; i < this->segmentCount; i++) {
         _processSegment(&this->modelList[i]);
     }
     glEnd();
@@ -110,19 +110,9 @@ void Object2639::load() {
 Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<float> r,
                        std::initializer_list<float> s, u32 segmentCount, gtGfx *modelList) {
 
-    float *move = (float *) m.begin();
-    float *rotate = (float *) r.begin();
-    float *scale = (float *) s.begin();
-
     this->move = m;
-
-    this->rotate.x = rotate[0];
-    this->rotate.y = rotate[1];
-    this->rotate.z = rotate[2];
-
-    this->scale.x = scale[0];
-    this->scale.y = scale[1];
-    this->scale.z = scale[2];
+    this->rotate = r;
+    this->scale = s;
 
     this->segmentCount = segmentCount;
     this->modelList = modelList;
