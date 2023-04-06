@@ -37,7 +37,7 @@ class Object2639 {
         u32 segmentCount;
         gtGfx *modelList;
 
-        // Object2639();
+        Object2639();
         Object2639(
             std::initializer_list<float> move,
             std::initializer_list<float> rotate,

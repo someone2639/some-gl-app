@@ -5,6 +5,12 @@
 #include <malloc.h>
 #include <math.h>
 
+#include <string>
+
+#include <tiny_gltf.h>
+using namespace tinygltf;
+
+
 
 #include "2639_defs.h"
 #include "Object2639.h"
@@ -66,6 +72,7 @@ void dbg_drawtex(u32 x, u32 y, char *path) {
     rdpq_tex_blit(&pxl, x, y, NULL);
 }
 
+Model model;
 void render() {
     static const GLubyte bgColor[] = {0, 255, 229, 255};
 
@@ -137,10 +144,15 @@ void render() {
     rdpq_font_position(20, 50);
     rdpq_font_print(fnt1, buf);
 
+
     rdpq_font_position(20, 70);
     rdpq_font_print(fnt1, buf2);
     rdpq_font_position(20, 90);
     rdpq_font_print(fnt1, buf3);
+
+    Mesh myMesh = model.meshes[0];
+    rdpq_font_position(20, 110);
+    rdpq_font_print(fnt1, myMesh.name.c_str());
 
     rdpq_font_end();
 
@@ -149,6 +161,9 @@ void render() {
 }
 
 int main() {
+    TinyGLTF loader;
+    std::string err;
+    std::string warn;
 	debug_init_isviewer();
 	debug_init_usblog();
     
@@ -169,6 +184,10 @@ int main() {
 
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
+    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, "rom:/untitled.glb"); // for binary glTF(.glb)
+    assert(warn.empty());
+    assert(err.empty());
+    assert(ret);
 
     Test_Obj.load();
     while (1) {

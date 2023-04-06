@@ -117,3 +117,13 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
     this->segmentCount = segmentCount;
     this->modelList = modelList;
 }
+
+Object2639::Object2639() {
+    this->move = {0};
+    this->rotate = {0};
+    this->scale = {0};
+
+    this->segmentCount = 0;
+    this->modelList = 0;
+}
+

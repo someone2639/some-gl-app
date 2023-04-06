@@ -1,11 +1,13 @@
 BUILD_DIR=build
 
+INCLUDES = -Iinclude/ -I/usr/include/tinygltf/
+
 include $(N64_INST)/include/n64.mk
-N64_CFLAGS += -Iinclude/
+N64_CFLAGS += $(INCLUDES)
 N64_CFLAGS += -Wno-missing-braces
 N64_CFLAGS += -Wno-int-conversion
 
-CXXFLAGS += -Iinclude/
+CXXFLAGS += $(INCLUDES)
 
 
 c_src = $(wildcard *.c)
@@ -15,9 +17,11 @@ O_FILES := $(c_src:%.c=$(BUILD_DIR)/%.o) $(cc_src:%.cc=$(BUILD_DIR)/%.o)
 
 assets_png = $(wildcard assets/*.png)
 assets_ttf = $(wildcard assets/*.ttf)
+assets_glb = $(wildcard assets/*.glb)
 
 assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite))) \
-			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64)))
+			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64))) \
+			  $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.glb)))
 
 MKSPRITE_FLAGS ?=
 
@@ -31,11 +35,19 @@ all: gldemo.z64
 
 test: gldemo.z64
 	ares $<
+test2: gldemo.z64
+	simple64-gui $<
 
 filesystem/%.font64: assets/%.ttf
 	@mkdir -p $(dir $@)
 	@echo "    [FONT] $@"
 	@$(N64_MKFONT) $(MKFONT_FLAGS) -o filesystem "$<"
+
+filesystem/%.glb: assets/%.glb
+	@mkdir -p $(dir $@)
+	@echo "    [GLB] $@"
+	cp $< $@
+
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
