@@ -2,6 +2,8 @@
 #include "types.h"
 #include "2639_defs.h"
 
+#include "Vector.h"
+
 extern Vector sCameraLook;
 extern Vector sCameraSpot;
 extern Vector sCameraRPY;
@@ -20,6 +22,15 @@ enum CameraModes {
 
 extern u32 gCameraMode;
 
-void VectorCopy(Vector * restrict dest, Vector * restrict src);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void VectorCopy(Vector * dest, Vector * src);
 void VectorFullApproach(Vector *dest, f32 *src, f32 multiplier);
 void FloatApproach(f32 *dest, f32 *src, f32 multiplier);
+extern void CameraUpdate();
+
+#ifdef __cplusplus
+};
+#endif

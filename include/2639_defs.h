@@ -12,11 +12,4 @@ extern struct controller_data gHeldButtons;
 
 
 
-typedef union _Vec {
-    struct {f32 x, y, z;};
-    struct {f32 roll, pitch, yaw;};
-} Vector;
-
-
-
 

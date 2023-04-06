@@ -2,7 +2,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include <initializer_list>
+
 #include "N64Graphics.h"
+
+#include "Vector.h"
 
 enum Material {
     MATERIAL_TEXTURE = 0,
@@ -13,28 +17,37 @@ enum Material {
     MATERIAL_COLOR,
 };
 
-typedef struct Object2639 {
-    // serviceable params
-    Vector move;
-    Vector rotate;
-    Vector scale;
-    void (*init)(struct Object2639 *o);
-    void (*loop)(struct Object2639 *o);
-    char *texturePath;
+class Object2639 {
+    private:
+        // internal params
+        GLuint _displaylist;
+        GLuint _texture[1];
+        sprite_t *_sprite;
 
-    // generated params
-    u32 segmentCount;
-    gtGfx *modelList;
+    public:
+        // serviceable params
+        Vector move;
+        Vector rotate;
+        Vector scale;
+        void (*init)(struct Object2639 *o);
+        void (*loop)(struct Object2639 *o);
+        char *texturePath;
 
+        // generated params
+        u32 segmentCount;
+        gtGfx *modelList;
 
-    // internal params
-    GLuint _displaylist;
-    GLuint _texture[1];
-    sprite_t *_sprite;
-} Object2639;
+        // Object2639();
+        Object2639(
+            std::initializer_list<float> move,
+            std::initializer_list<float> rotate,
+            std::initializer_list<float> scale,
+            u32 segmentCount,
+            gtGfx *modelList
+        );
 
-
-
-extern void Object2639_Register(Object2639 *o);
-extern void Object2639_RenderList(Object2639 *o);
+        void load();
+        void render();
+        void renderList();
+};
 
