@@ -1,13 +1,20 @@
 BUILD_DIR=build
 
+
+# WARNINGS = -Wall -Wextra
+WARNINGS = 
 INCLUDES = -Iinclude/ -I/usr/include/tinygltf/
+DEFINES = -DTINYGLTF_NO_STB_IMAGE \
+		  -DTINYGLTF_NO_STB_IMAGE_WRITE \
+		  -DTINYGLTF_NO_EXTERNAL_IMAGE
 
 include $(N64_INST)/include/n64.mk
 N64_CFLAGS += $(INCLUDES)
 N64_CFLAGS += -Wno-missing-braces
 N64_CFLAGS += -Wno-int-conversion
 
-CXXFLAGS += $(INCLUDES)
+
+CXXFLAGS += $(WARNINGS) $(INCLUDES) $(DEFINES)
 
 
 c_src = $(wildcard *.c)

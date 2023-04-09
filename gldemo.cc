@@ -72,7 +72,6 @@ void dbg_drawtex(u32 x, u32 y, char *path) {
     rdpq_tex_blit(&pxl, x, y, NULL);
 }
 
-Model model;
 void render() {
     static const GLubyte bgColor[] = {0, 255, 229, 255};
 
@@ -113,8 +112,8 @@ void render() {
     Test_Obj.renderList();
 
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
     glEnable(GL_BLEND);
 
     gl_context_end();
@@ -138,8 +137,10 @@ void render() {
         );
 
 
+    extern std::vector<Object2639> objectPool;
+    Object2639 &o = objectPool.back();
     char buf3[30];
-    sprintf(buf3, "%d %d", ContRead(0, x), ContRead(0, y));
+    sprintf(buf3, "%d %d", o._D, ContRead(0, y));
 
     rdpq_font_position(20, 50);
     rdpq_font_print(fnt1, buf);
@@ -150,9 +151,25 @@ void render() {
     rdpq_font_position(20, 90);
     rdpq_font_print(fnt1, buf3);
 
-    Mesh myMesh = model.meshes[0];
-    rdpq_font_position(20, 110);
-    rdpq_font_print(fnt1, myMesh.name.c_str());
+
+
+    int k = 0;
+    for (auto [v0, v1, v2] : o._DP) {
+        char buf4[50];
+        sprintf(buf4, "%f %f %f", v0, v1, v2);
+        rdpq_font_position(20, 110 + k);
+        rdpq_font_print(fnt1, buf4);
+        k += 10;
+    }
+
+    k = 0;
+    for (auto [v0, v1, v2] : o._DI) {
+        char buf4[50];
+        sprintf(buf4, "%f %f %f", v0, v1, v2);
+        rdpq_font_position(100, 110 + k);
+        rdpq_font_print(fnt1, buf4);
+        k += 10;
+    }
 
     rdpq_font_end();
 
@@ -161,7 +178,7 @@ void render() {
 }
 
 int main() {
-    TinyGLTF loader;
+    TinyGLTF _loader;
     std::string err;
     std::string warn;
 	debug_init_isviewer();
@@ -184,12 +201,12 @@ int main() {
 
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
-    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, "rom:/untitled.glb"); // for binary glTF(.glb)
-    assert(warn.empty());
-    assert(err.empty());
-    assert(ret);
+    // bool ret = _loader.LoadBinaryFromFile(&model, &err, &warn, "rom:/untitled.glb"); // for binary glTF(.glb)
+    // assert(warn.empty());
+    // assert(err.empty());
+    // assert(ret);
 
-    Test_Obj.load();
+    Object2639::RegisterModel("rom:/Test.glb");
     while (1) {
         controller_scan();
         gPressedButtons = get_keys_pressed();

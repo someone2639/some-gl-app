@@ -5,10 +5,27 @@
 #include <malloc.h>
 #include <math.h>
 
+#include <vector>
+#include <string>
+
+#include <tiny_gltf.h>
+using namespace tinygltf;
+
 
 #include "2639_defs.h"
+#include "glb_impl.h"
 #include "Object2639.h"
 #include "camera.h"
+#include "swap.h"
+
+std::vector<Object2639> objectPool;
+
+void Object2639::initializeInternalParams() {
+    this->_initialized = 0;
+    this->_displaylist = 0;
+    this->_texture[0] = 0;
+    this->_sprite = nullptr;
+}
 
 static void _processSegment(gtGfx *g) {
     gtState *gs = g->obj.statep;
@@ -75,7 +92,7 @@ void Object2639::renderList() {
     if (this->texturePath != NULL) {
         glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
     }
-    glCallList(this->segmentCount);
+    glCallList(this->_displaylist);
 
     glPopMatrix();
 }
@@ -98,7 +115,7 @@ void Object2639::load() {
         surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
         glTexImageN64(GL_TEXTURE_2D, 0, &surf);
     }
-    glNewList(this->segmentCount, GL_COMPILE);
+    glNewList(this->_displaylist, GL_COMPILE);
     glBegin(GL_TRIANGLES);
     for (u32 i = 0; i < this->segmentCount; i++) {
         _processSegment(&this->modelList[i]);
@@ -121,9 +138,125 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
 Object2639::Object2639() {
     this->move = {0};
     this->rotate = {0};
-    this->scale = {0};
+    // this->scale = {1, 1, 1};
+    this->scale = {64, 64, 64};
 
     this->segmentCount = 0;
     this->modelList = 0;
+
+    this->initializeInternalParams();
+}
+
+Object2639::Object2639(std::string glb) : Object2639() {
+    std::string err, warn;
+    Model model;
+
+    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
+    assert(warn.empty());
+    assert(err.empty());
+    assert(ret);
+
+    this->_displaylist = glGenLists(1);
+
+    glNewList(this->_displaylist, GL_COMPILE);
+    glBegin(GL_TRIANGLES);
+
+    for (Mesh &mes : model.meshes) {
+        for (Primitive &prim : mes.primitives) {
+            const Accessor& accessor = model.accessors[prim.attributes["POSITION"]];
+
+            const BufferView& bufferView = model.bufferViews[accessor.bufferView];
+            const Buffer& buffer = model.buffers[bufferView.buffer];
+
+            float* positions = (float *)(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+            f32_swap_endianness(positions, accessor.count);
+
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(3, GL_FLOAT, sizeof(float) * 3, positions);
+            const Accessor &indexAccessor = model.accessors[prim.indices];
+            const BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
+            const Buffer& indexBuffer = model.buffers[indexBufferView.buffer];
+            if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT
+             || indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT
+            ) {
+                u16 *bb = (u16*)&indexBuffer.data[
+                    indexBufferView.byteOffset + indexAccessor.byteOffset
+                ];
+                u16_swap_endianness(bb, indexAccessor.count);
+            }
+
+            glDrawElements(GL_TRIANGLES, indexAccessor.count, indexAccessor.componentType,
+                &indexBuffer.data[
+                    indexBufferView.byteOffset + indexAccessor.byteOffset
+                ]
+            );
+
+            u16 *bb = (u16*)&indexBuffer.data[
+                indexBufferView.byteOffset + indexAccessor.byteOffset
+            ];
+
+
+            // debug
+            for (size_t i = 0; i < indexAccessor.count; i++) {
+                this->_DI.emplace_back(std::tuple<float, float, float>(
+                    positions[bb[i * 3 + 0]],
+                    positions[bb[i * 3 + 1]],
+                    positions[bb[i * 3 + 2]]
+                ));
+            }
+            this->_D = indexAccessor.count;
+        }
+    }
+    glEnd();
+    glEndList();
+}
+
+void Object2639::RegisterModel(Model m) {
+    objectPool.emplace_back(Object2639());
+
+    Object2639 &o = objectPool.back();
+
+    o._model = m;
+}
+
+void Object2639::RegisterModel(std::string s) {
+
+    objectPool.emplace_back(Object2639(s));
+}
+
+void Object2639::DrawGLB(Model _m) {
+    Mesh m = _m.meshes[0];
+
+    for (size_t i = 0; i < m.primitives.size(); i++) {
+        const Primitive &primitive = m.primitives[i];
+
+        if (primitive.indices < 0) return;
+    }
+}
+
+void Object2639::update() {
+    if (this->_initialized == 0) {
+        if (this->init != nullptr) {
+            this->init(this);
+        }
+
+        this->_initialized = 1;
+    }
+
+    if (this->loop != nullptr) {
+        this->loop(this);
+    }
+
+    this->renderList();
+}
+
+
+void UpdateObjects() {
+    for (Object2639 &i : objectPool) {
+        i.update();
+    }
 }
 

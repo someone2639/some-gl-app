@@ -16,10 +16,12 @@ Vector::Vector(f32 x, f32 y, f32 z) {
     this->z = z;
 }
 
-void Vector::operator =(Vector &that) {
-    this->x = that.x;
-    this->y = that.y;
-    this->z = that.z;
+f32 Vector::operator [](int idx) {
+    switch (idx) {
+        case 0: return this->x; break;
+        case 1: return this->y; break;
+        case 2: return this->z; break;
+    }
 }
 
 void Vector::operator =(std::initializer_list<float> that) {

@@ -3,10 +3,15 @@
 #include <GL/glu.h>
 
 #include <initializer_list>
+#include <string>
+#include <vector>
+#include <tuple>
 
 #include "N64Graphics.h"
 
 #include "Vector.h"
+
+#include <tiny_gltf.h>
 
 enum Material {
     MATERIAL_TEXTURE = 0,
@@ -20,11 +25,18 @@ enum Material {
 class Object2639 {
     private:
         // internal params
-        GLuint _displaylist;
+        u32 _initialized;
         GLuint _texture[1];
         sprite_t *_sprite;
+        GLuint _displaylist;
+
+        void initializeInternalParams();
 
     public:
+        tinygltf::Model _model;
+        f32 _D;
+        std::vector<std::tuple<float, float, float>> _DP;
+        std::vector<std::tuple<float, float, float>> _DI;
         // serviceable params
         Vector move;
         Vector rotate;
@@ -45,9 +57,16 @@ class Object2639 {
             u32 segmentCount,
             gtGfx *modelList
         );
+        Object2639(std::string);
 
         void load();
         void render();
         void renderList();
+        void update();
+
+        static void RegisterModel(tinygltf::Model);
+        static void RegisterModel(std::string);
+        static void DrawGLB(tinygltf::Model);
 };
 
+void UpdateObjects();

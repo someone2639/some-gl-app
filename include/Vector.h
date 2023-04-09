@@ -13,6 +13,6 @@ class Vector {
         Vector();
         Vector(f32, f32, f32);
 
-        void operator =(Vector &that);
+        f32 operator [](int);
         void operator =(std::initializer_list<float> that);
 };
