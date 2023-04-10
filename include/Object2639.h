@@ -33,7 +33,6 @@ class Object2639 {
         void initializeInternalParams();
 
     public:
-        tinygltf::Model _model;
         f32 _D;
         std::vector<std::tuple<float, float, float>> _DP;
         std::vector<std::tuple<float, float, float>> _DI;
@@ -59,14 +58,11 @@ class Object2639 {
         );
         Object2639(std::string);
 
-        void load();
         void render();
         void renderList();
         void update();
 
-        static void RegisterModel(tinygltf::Model);
         static void RegisterModel(std::string);
-        static void DrawGLB(tinygltf::Model);
 };
 
 void UpdateObjects();

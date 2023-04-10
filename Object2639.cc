@@ -22,7 +22,7 @@ std::vector<Object2639> objectPool;
 
 void Object2639::initializeInternalParams() {
     this->_initialized = 0;
-    this->_displaylist = 0;
+    this->_displaylist = 0x2639;
     this->_texture[0] = 0;
     this->_sprite = nullptr;
 }
@@ -93,41 +93,40 @@ void Object2639::renderList() {
         glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
     }
 
-    assert(this->_displaylist != 0);
     glCallList(this->_displaylist);
 
     glPopMatrix();
 }
 
-void Object2639::load() {
-    GLuint aa = glGenLists(1);
-    assert(aa != 0);
+// void Object2639::load() {
+//     GLuint aa = glGenLists(1);
+//     assert(aa != 0);
 
-    this->_displaylist = aa;
+//     this->_displaylist = aa;
 
-    if (this->texturePath != NULL) {
-        this->_sprite = sprite_load(this->texturePath);
-        assert(this->_sprite != NULL);
+//     if (this->texturePath != NULL) {
+//         this->_sprite = sprite_load(this->texturePath);
+//         assert(this->_sprite != NULL);
 
-        glGenTextures(1, this->_texture);
-        glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
+//         glGenTextures(1, this->_texture);
+//         glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
-        glTexImageN64(GL_TEXTURE_2D, 0, &surf);
-    }
-    glNewList(this->_displaylist, GL_COMPILE);
-    glBegin(GL_TRIANGLES);
-    for (u32 i = 0; i < this->segmentCount; i++) {
-        _processSegment(&this->modelList[i]);
-    }
-    glEnd();
-    glEndList();
-}
+//         surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
+//         glTexImageN64(GL_TEXTURE_2D, 0, &surf);
+//     }
+//     glNewList(this->_displaylist, GL_COMPILE);
+//     glBegin(GL_TRIANGLES);
+//     for (u32 i = 0; i < this->segmentCount; i++) {
+//         _processSegment(&this->modelList[i]);
+//     }
+//     glEnd();
+//     glEndList();
+// }
 
 Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<float> r,
                        std::initializer_list<float> s, u32 segmentCount, gtGfx *modelList) {
@@ -177,7 +176,8 @@ Object2639::Object2639(std::string glb) : Object2639() {
 
             float* positions = (float *)(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-            f32_swap_endianness(positions, accessor.count);
+
+            f32_swap_endianness(positions, accessor.count * 3);
 
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
             glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
@@ -221,27 +221,9 @@ Object2639::Object2639(std::string glb) : Object2639() {
     glEndList();
 }
 
-void Object2639::RegisterModel(Model m) {
-    objectPool.emplace_back(Object2639());
-
-    Object2639 &o = objectPool.back();
-
-    o._model = m;
-}
-
 void Object2639::RegisterModel(std::string s) {
 
     objectPool.emplace_back(Object2639(s));
-}
-
-void Object2639::DrawGLB(Model _m) {
-    Mesh m = _m.meshes[0];
-
-    for (size_t i = 0; i < m.primitives.size(); i++) {
-        const Primitive &primitive = m.primitives[i];
-
-        if (primitive.indices < 0) return;
-    }
 }
 
 void Object2639::update() {
