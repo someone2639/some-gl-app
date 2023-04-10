@@ -82,7 +82,10 @@ void Object2639::render() {
 void Object2639::renderList() {
     glPushMatrix();
 
-    glTranslatef(this->move.x, this->move.y, this->move.z);
+    if ((this->move.x == 0) && (this->move.y == 0) && (this->move.z == 0)) {
+    } else {
+        glTranslatef(this->move.x, this->move.y, this->move.z);
+    }
 
     glRotatef(this->rotate.x, 1, 0, 0);
     glRotatef(this->rotate.y, 0, 1, 0);
@@ -142,10 +145,9 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
 }
 
 Object2639::Object2639() {
-    this->move = {0};
-    this->rotate = {0};
-    // this->scale = {1, 1, 1};
-    this->scale = {64, 64, 64};
+    this->move = {0, 0, 0};
+    this->rotate = {0, 0, 0};
+    this->scale = {1, 1, 1};
 
     this->segmentCount = 0;
     this->modelList = 0;

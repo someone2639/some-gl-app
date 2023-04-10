@@ -109,11 +109,11 @@ void render() {
 
     glEnable(GL_COLOR_MATERIAL);
 
-    Test_Obj.renderList();
+    UpdateObjects();
 
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glEnable(GL_BLEND);
 
     gl_context_end();
