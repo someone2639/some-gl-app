@@ -24,6 +24,7 @@ void Object2639::initializeInternalParams() {
     this->_initialized = 0;
     this->_displaylist = 0x2639;
     this->_texture[0] = 0;
+    this->texturePath = nullptr;
     this->_sprite = nullptr;
 }
 
@@ -89,10 +90,11 @@ void Object2639::renderList() {
 
     glScalef(this->scale.x, this->scale.y, this->scale.z);
 
-    if (this->texturePath != NULL) {
-        glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
-    }
+    // if (this->texturePath != nullptr) {
+    //     glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
+    // }
 
+    // assert((glIsList(this->_displaylist) == GL_TRUE));
     glCallList(this->_displaylist);
 
     glPopMatrix();
@@ -161,10 +163,10 @@ Object2639::Object2639(std::string glb) : Object2639() {
     assert(ret);
 
     GLuint aa = glGenLists(1);
-    assert(aa != 0);
     this->_displaylist = aa;
 
     glNewList(this->_displaylist, GL_COMPILE);
+    assert(glGetError() == 0);
     glBegin(GL_TRIANGLES);
 
     for (Mesh &mes : model.meshes) {
@@ -201,13 +203,16 @@ Object2639::Object2639(std::string glb) : Object2639() {
                 ]
             );
 
+            // debug
             u16 *bb = (u16*)&indexBuffer.data[
                 indexBufferView.byteOffset + indexAccessor.byteOffset
             ];
-
-
-            // debug
             for (size_t i = 0; i < indexAccessor.count; i++) {
+                // glVertex3f(
+                //     positions[bb[i * 3 + 0]],
+                //     positions[bb[i * 3 + 1]],
+                //     positions[bb[i * 3 + 2]]
+                // );
                 this->_DI.emplace_back(std::tuple<float, float, float>(
                     positions[bb[i * 3 + 0]],
                     positions[bb[i * 3 + 1]],
@@ -219,6 +224,10 @@ Object2639::Object2639(std::string glb) : Object2639() {
     }
     glEnd();
     glEndList();
+    assert(glGetError() == 0);
+    assert((glIsList(this->_displaylist) == GL_TRUE));
+    assert(this->_displaylist == aa);
+    assert((glIsList(aa) == GL_TRUE));
 }
 
 void Object2639::RegisterModel(std::string s) {
@@ -233,12 +242,14 @@ void Object2639::update() {
         }
 
         this->_initialized = 1;
+        assert((glIsList(this->_displaylist) == GL_TRUE));
+        return;
     }
 
     if (this->loop != nullptr) {
         this->loop(this);
     }
-
+    assert((glIsList(this->_displaylist) == GL_TRUE));
     this->renderList();
 }
 
