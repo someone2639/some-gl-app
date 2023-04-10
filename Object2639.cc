@@ -92,13 +92,18 @@ void Object2639::renderList() {
     if (this->texturePath != NULL) {
         glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
     }
+
+    assert(this->_displaylist != 0);
     glCallList(this->_displaylist);
 
     glPopMatrix();
 }
 
 void Object2639::load() {
-    this->_displaylist = glGenLists(1);
+    GLuint aa = glGenLists(1);
+    assert(aa != 0);
+
+    this->_displaylist = aa;
 
     if (this->texturePath != NULL) {
         this->_sprite = sprite_load(this->texturePath);
@@ -156,7 +161,9 @@ Object2639::Object2639(std::string glb) : Object2639() {
     assert(err.empty());
     assert(ret);
 
-    this->_displaylist = glGenLists(1);
+    GLuint aa = glGenLists(1);
+    assert(aa != 0);
+    this->_displaylist = aa;
 
     glNewList(this->_displaylist, GL_COMPILE);
     glBegin(GL_TRIANGLES);

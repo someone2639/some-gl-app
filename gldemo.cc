@@ -140,7 +140,7 @@ void render() {
     extern std::vector<Object2639> objectPool;
     Object2639 &o = objectPool.back();
     char buf3[30];
-    sprintf(buf3, "%d %d", o._D, ContRead(0, y));
+    sprintf(buf3, "%lf %d", o._D, ContRead(0, y));
 
     rdpq_font_position(20, 50);
     rdpq_font_print(fnt1, buf);

@@ -17,11 +17,13 @@ Vector::Vector(f32 x, f32 y, f32 z) {
 }
 
 f32 Vector::operator [](int idx) {
-    switch (idx) {
+    switch (idx % 3) {
         case 0: return this->x; break;
         case 1: return this->y; break;
         case 2: return this->z; break;
     }
+
+    return -1.0f; // impossible?
 }
 
 void Vector::operator =(std::initializer_list<float> that) {
