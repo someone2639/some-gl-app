@@ -56,10 +56,10 @@ class Object2639 {
             u32 segmentCount,
             gtGfx *modelList
         );
-        Object2639(std::string);
+        Object2639(std::string glb);
+        // Object2639(std::string glb, std::string image);
 
         void render();
-        void renderList();
         void update();
 
         static void RegisterModel(std::string);

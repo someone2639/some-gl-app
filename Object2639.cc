@@ -55,33 +55,6 @@ static void _processSegment(gtGfx *g) {
 void Object2639::render() {
     glPushMatrix();
 
-    glTranslatef(this->move.x, this->move.y, this->move.z);
-
-    // if ((this->rotate.x == 0.0f)
-    //     && (this->rotate.y == 0.0f)
-    //     && (this->rotate.z == 0.0f)
-    // ) {
-
-    // } else {
-    // }
-    // TODO: have it only apply rotation if nonzero
-    // glRotatef(0, this->rotate.x, this->rotate.y, this->rotate.z);
-
-    glScalef(this->scale.x, this->scale.y, this->scale.z);
-
-    glBegin(GL_TRIANGLES);
-    for (u32 i = 0; i < this->segmentCount; i++) {
-        _processSegment(&this->modelList[i]);
-    }
-    glEnd();
-
-
-    glPopMatrix();
-}
-
-void Object2639::renderList() {
-    glPushMatrix();
-
     if ((this->move.x == 0) && (this->move.y == 0) && (this->move.z == 0)) {
     } else {
         glTranslatef(this->move.x, this->move.y, this->move.z);
@@ -93,9 +66,9 @@ void Object2639::renderList() {
 
     glScalef(this->scale.x, this->scale.y, this->scale.z);
 
-    // if (this->texturePath != nullptr) {
-    //     glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
-    // }
+    if (this->texturePath != nullptr) {
+        glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
+    }
 
     // assert((glIsList(this->_displaylist) == GL_TRUE));
     glCallList(this->_displaylist);
@@ -173,23 +146,48 @@ Object2639::Object2639(std::string glb) : Object2639() {
 
     for (Mesh &mes : model.meshes) {
         for (Primitive &prim : mes.primitives) {
-            const Accessor& accessor = model.accessors[prim.attributes["POSITION"]];
-
-            const BufferView& bufferView = model.bufferViews[accessor.bufferView];
-            const Buffer& buffer = model.buffers[bufferView.buffer];
-
-            float* positions = (float *)(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
-
-
-            f32_swap_endianness(positions, accessor.count * 3);
-
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
             glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+// Positions
+            const Accessor& accessor = model.accessors[prim.attributes["POSITION"]];
+            const BufferView& bufferView = model.bufferViews[accessor.bufferView];
+            const Buffer &b = model.buffers[bufferView.buffer];
+
+            f32 *positions = (f32 *)(&b.data[bufferView.byteOffset + accessor.byteOffset]);
+            f32_swap_endianness(positions, accessor.count * 3);
             glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(3, GL_FLOAT, sizeof(float) * 3, positions);
+            glVertexPointer(3, GL_FLOAT, sizeof(f32) * 3, positions);
+
+// Normals
+            const Accessor& normalAccessor = model.accessors[prim.attributes["NORMAL"]];
+            const BufferView& normalBufferView = model.bufferViews[normalAccessor.bufferView];
+            const Buffer &normalBuf = model.buffers[bufferView.buffer];
+
+            f32 *normals = (f32 *)(&normalBuf.data[
+                normalBufferView.byteOffset + normalAccessor.byteOffset
+            ]);
+            f32_swap_endianness(normals, normalAccessor.count * 3);
+            glEnableClientState(GL_NORMAL_ARRAY);
+            glNormalPointer(GL_FLOAT, sizeof(f32) * 3, normals);
+
+// Texture Coords
+            const Accessor& texcoordAccessor = model.accessors[prim.attributes["TEXCOORD_0"]];
+            const BufferView& texcoordBufferView = model.bufferViews[texcoordAccessor.bufferView];
+            const Buffer &texcoordBuf = model.buffers[bufferView.buffer];
+
+            f32 *texcoords = (f32 *)(&texcoordBuf.data[
+                texcoordBufferView.byteOffset + texcoordAccessor.byteOffset
+            ]);
+            f32_swap_endianness(texcoords, texcoordAccessor.count * 2);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(f32) * 2, texcoords);
+
+// Triangle Indices
             const Accessor &indexAccessor = model.accessors[prim.indices];
             const BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
             const Buffer& indexBuffer = model.buffers[indexBufferView.buffer];
+
             if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT
              || indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT
             ) {
@@ -204,24 +202,6 @@ Object2639::Object2639(std::string glb) : Object2639() {
                     indexBufferView.byteOffset + indexAccessor.byteOffset
                 ]
             );
-
-            // debug
-            u16 *bb = (u16*)&indexBuffer.data[
-                indexBufferView.byteOffset + indexAccessor.byteOffset
-            ];
-            for (size_t i = 0; i < indexAccessor.count; i++) {
-                // glVertex3f(
-                //     positions[bb[i * 3 + 0]],
-                //     positions[bb[i * 3 + 1]],
-                //     positions[bb[i * 3 + 2]]
-                // );
-                this->_DI.emplace_back(std::tuple<float, float, float>(
-                    positions[bb[i * 3 + 0]],
-                    positions[bb[i * 3 + 1]],
-                    positions[bb[i * 3 + 2]]
-                ));
-            }
-            this->_D = indexAccessor.count;
         }
     }
     glEnd();
@@ -242,6 +222,21 @@ void Object2639::update() {
         if (this->init != nullptr) {
             this->init(this);
         }
+        if (this->texturePath != NULL) {
+            this->_sprite = sprite_load(this->texturePath);
+            assert(this->_sprite != NULL);
+
+            glGenTextures(1, this->_texture);
+            glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+            surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
+            glTexImageN64(GL_TEXTURE_2D, 0, &surf);
+        }
 
         this->_initialized = 1;
         assert((glIsList(this->_displaylist) == GL_TRUE));
@@ -252,12 +247,13 @@ void Object2639::update() {
         this->loop(this);
     }
     assert((glIsList(this->_displaylist) == GL_TRUE));
-    this->renderList();
+    this->render();
 }
 
 
 void UpdateObjects() {
     for (Object2639 &i : objectPool) {
+        i.texturePath = "rom:/misuzu.sprite";
         i.update();
     }
 }
