@@ -17,6 +17,9 @@ using namespace tinygltf;
 #include "camera.h"
 #include "Timer.h"
 
+#define RDPQ_LOG_FLAG_SHOWTRIS       0x00000001
+extern int __rdpq_debug_log_flags;
+
 rdpq_font_t *fnt1;
 
 struct controller_data gPressedButtons;
@@ -155,8 +158,8 @@ void render() {
 
 
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 80.0f;
-    float far_plane = 800.0f;
+    float near_plane = 10.0f;
+    float far_plane = 500.0f;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
@@ -182,6 +185,8 @@ void render() {
     gl_context_end();
 }
 
+#include <rdpq_debug.h>
+
 int main() {
     TinyGLTF _loader;
     std::string err;
@@ -196,6 +201,7 @@ int main() {
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
 
     gl_init();
+    rdpq_debug_start();
 
     controller_init();
 
@@ -211,10 +217,12 @@ int main() {
     // assert(err.empty());
     // assert(ret);
 
+    // Object2639::RegisterModel("rom:/alphatest2.glb");
     Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
 
     Timer renderTimer = Timer::RegisterTimer("Render a Cube");
     Timer displayTimer = Timer::RegisterTimer("Display");
+        // renderTimer.start();
 
     while (1) {
         controller_scan();
@@ -226,8 +234,14 @@ int main() {
         surface_t *disp = display_get();
         rdpq_attach(disp, &zbuffer);
 
-        renderTimer.start();
+
+        rdpq_debug_log(true);
+        __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
         render();
+        rdpq_debug_log(false);
+
+        // rdpq_debug_stop();
+
         renderTimer.end();
 
         rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
@@ -237,5 +251,7 @@ int main() {
         rdpq_detach_show();
 
         displayTimer.end();
+
+        // break;
     }
 }

@@ -120,7 +120,7 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
 Object2639::Object2639() {
     this->move = {0, 0, 0};
     this->rotate = {0, 0, 0};
-    this->scale = {50, 50, 50};
+    this->scale = {10, 10, 10};
 
     this->segmentCount = 0;
     this->modelList = 0;
