@@ -15,6 +15,7 @@ using namespace tinygltf;
 #include "2639_defs.h"
 #include "Object2639.h"
 #include "camera.h"
+#include "Timer.h"
 
 rdpq_font_t *fnt1;
 
@@ -72,56 +73,7 @@ void dbg_drawtex(u32 x, u32 y, char *path) {
     rdpq_tex_blit(&pxl, x, y, NULL);
 }
 
-void render() {
-    static const GLubyte bgColor[] = {0, 255, 229, 255};
-
-    surface_t *disp = display_get();
-
-    rdpq_attach(disp, &zbuffer);
-
-    gl_context_begin();
-
-    glClearColor(
-        bgColor[0] / 255.0f,
-        bgColor[1] / 255.0f,
-        bgColor[2] / 255.0f,
-        bgColor[3] / 255.0f
-    );
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 50.0f;
-    float far_plane = 2000.0f;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
-
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    void CameraUpdate();
-    CameraUpdate();
-
-    glRotatef(0, 0, 1, 0);
-
-    glEnable(GL_COLOR_MATERIAL);
-
-    UpdateObjects();
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_BLEND);
-
-    gl_context_end();
-
-
-
-    rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
-
+void printDebug() {
     char buf[30];
     sprintf(buf, "%f %f %f",
         sCameraSpot.x,
@@ -170,11 +122,64 @@ void render() {
         rdpq_font_print(fnt1, buf4);
         k += 10;
     }
+}
 
-    rdpq_font_end();
+void printTimers() {
+    int k = 0;
+
+    for (Timer &tm : timerPool) {
+        char buf[50];
+        rdpq_font_position(100, 110 + k);
+
+        sprintf(buf, "%s: %.3f ms", tm.name.c_str(), tm.elapsed_ms);
+        rdpq_font_print(fnt1, buf);
+
+        k += 10;
+    }
+}
 
 
-    rdpq_detach_show();
+void render() {
+    static const GLubyte bgColor[] = {0, 255, 229, 255};
+
+    gl_context_begin();
+
+    glClearColor(
+        bgColor[0] / 255.0f,
+        bgColor[1] / 255.0f,
+        bgColor[2] / 255.0f,
+        bgColor[3] / 255.0f
+    );
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
+    float near_plane = 80.0f;
+    float far_plane = 800.0f;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
+
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    void CameraUpdate();
+    CameraUpdate();
+
+    glRotatef(0, 0, 1, 0);
+
+    glEnable(GL_COLOR_MATERIAL);
+
+    UpdateObjects();
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_BLEND);
+
+    gl_context_end();
 }
 
 int main() {
@@ -206,13 +211,31 @@ int main() {
     // assert(err.empty());
     // assert(ret);
 
-    Object2639::RegisterModel("rom:/Test.glb");
+    Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
+
+    Timer renderTimer = Timer::RegisterTimer("Render a Cube");
+    Timer displayTimer = Timer::RegisterTimer("Display");
+
     while (1) {
         controller_scan();
         gPressedButtons = get_keys_pressed();
         gHeldButtons = get_keys_down();
 
+        displayTimer.start();
 
+        surface_t *disp = display_get();
+        rdpq_attach(disp, &zbuffer);
+
+        renderTimer.start();
         render();
+        renderTimer.end();
+
+        rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
+        // printDebug();
+        // printTimers();
+        rdpq_font_end();
+        rdpq_detach_show();
+
+        displayTimer.end();
     }
 }

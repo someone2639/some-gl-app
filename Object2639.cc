@@ -120,12 +120,15 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
 Object2639::Object2639() {
     this->move = {0, 0, 0};
     this->rotate = {0, 0, 0};
-    this->scale = {1, 1, 1};
+    this->scale = {50, 50, 50};
 
     this->segmentCount = 0;
     this->modelList = 0;
 
     this->initializeInternalParams();
+
+    this->init = nullptr;
+    this->loop = nullptr;
 }
 
 Object2639::Object2639(std::string glb) : Object2639() {
@@ -133,8 +136,8 @@ Object2639::Object2639(std::string glb) : Object2639() {
     Model model;
 
     bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
-    assert(warn.empty());
-    assert(err.empty());
+    assertf(err.empty(), err.c_str());
+    assertf(warn.empty(), warn.c_str());
     assert(ret);
 
     GLuint aa = glGenLists(1);
@@ -170,6 +173,18 @@ Object2639::Object2639(std::string glb) : Object2639() {
             f32_swap_endianness(normals, normalAccessor.count * 3);
             glEnableClientState(GL_NORMAL_ARRAY);
             glNormalPointer(GL_FLOAT, sizeof(f32) * 3, normals);
+
+// Colors
+            const Accessor& colorAccessor = model.accessors[prim.attributes["COLOR_0"]];
+            const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
+            const Buffer &colorBuf = model.buffers[bufferView.buffer];
+
+            u16 *colors = (u16 *)(&colorBuf.data[
+                colorBufferView.byteOffset + colorAccessor.byteOffset
+            ]);
+            // u16_swap_endianness(colors, colorAccessor.count * 4);
+            glEnableClientState(GL_COLOR_ARRAY);
+            glColorPointer(4, GL_UNSIGNED_SHORT, sizeof(u16) * 4, colors);
 
 // Texture Coords
             const Accessor& texcoordAccessor = model.accessors[prim.attributes["TEXCOORD_0"]];
@@ -213,7 +228,6 @@ Object2639::Object2639(std::string glb) : Object2639() {
 }
 
 void Object2639::RegisterModel(std::string s) {
-
     objectPool.emplace_back(Object2639(s));
 }
 
@@ -253,7 +267,7 @@ void Object2639::update() {
 
 void UpdateObjects() {
     for (Object2639 &i : objectPool) {
-        i.texturePath = "rom:/misuzu.sprite";
+        // i.texturePath = "rom:/misuzu.sprite";
         i.update();
     }
 }

@@ -32,6 +32,8 @@ class Object2639 {
 
         void initializeInternalParams();
 
+
+
     public:
         f32 _D;
         std::vector<std::tuple<float, float, float>> _DP;
