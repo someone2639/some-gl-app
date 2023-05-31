@@ -12,6 +12,7 @@
 #include "Vector.h"
 
 #include <tiny_gltf.h>
+using namespace tinygltf;
 
 enum Material {
     MATERIAL_TEXTURE = 0,
@@ -61,6 +62,8 @@ class Object2639 {
         );
         Object2639(std::string glb);
         // Object2639(std::string glb, std::string image);
+
+        // void processGLTF(std::vector<Mesh> meshes);
 
         void render();
         void update();

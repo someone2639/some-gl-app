@@ -168,6 +168,22 @@ void render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+// LIGHTS
+    float light_radius = 1.0f;
+    static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
+    static const GLfloat light_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 2.0f/light_radius);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f/(light_radius*light_radius));
+
+    GLfloat mat_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mat_diffuse);
+    glEnable(GL_LIGHTING);
+
+// CAMERA
     void CameraUpdate();
     CameraUpdate();
 

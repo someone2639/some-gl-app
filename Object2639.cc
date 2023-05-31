@@ -149,10 +149,27 @@ Object2639::Object2639(std::string glb) : Object2639() {
     assert(glGetError() == 0);
     glBegin(GL_TRIANGLES);
 
+    // std::vector<Mesh> deferredMeshes;
+
     for (Mesh &mes : model.meshes) {
         for (Primitive &prim : mes.primitives) {
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
             glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+// Material Settings
+            int matIndex = prim.material;
+            struct tinygltf::Material *m = &model.materials[matIndex];
+            if (m->alphaMode == "BLEND") {
+                // deferredMeshes.emplace_back(mes);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            if (m->doubleSided == true) {
+                glDisable(GL_CULL_FACE);
+            } else {
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_BACK);
+            }
 
 // Positions
             const Accessor& accessor = model.accessors[prim.attributes["POSITION"]];
@@ -184,7 +201,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
             u16 *colors = (u16 *)(&colorBuf.data[
                 colorBufferView.byteOffset + colorAccessor.byteOffset
             ]);
-            // u16_swap_endianness(colors, colorAccessor.count * 4);
+            u16_swap_endianness(colors, colorAccessor.count * 4);
             glEnableClientState(GL_COLOR_ARRAY);
             glColorPointer(4, GL_UNSIGNED_SHORT, sizeof(u16) * 4, colors);
 
@@ -201,8 +218,6 @@ Object2639::Object2639(std::string glb) : Object2639() {
             glTexCoordPointer(2, GL_FLOAT, sizeof(f32) * 2, texcoords);
 
 // Texture
-            int matIndex = prim.material;
-            struct tinygltf::Material *m = &model.materials[matIndex];
             PbrMetallicRoughness p = m->pbrMetallicRoughness;
             TextureInfo ti = p.baseColorTexture;
 
@@ -219,8 +234,21 @@ Object2639::Object2639(std::string glb) : Object2639() {
             glBindTexture(GL_TEXTURE_2D, this->_texture[this->_texIndex]);
             this->_texIndex++;
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            Texture *tx = &model.textures[ti.index];
+            Sampler *sm = &model.samplers[tx->sampler];
+            if (sm->wrapS == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,  GL_MIRRORED_REPEAT_ARB);
+            } else {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            }
+
+            if (sm->wrapT == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,  GL_MIRRORED_REPEAT_ARB);
+            } else {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            }
+
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -249,6 +277,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
             );
         }
     }
+
     glEnd();
     glEndList();
     assert(glGetError() == 0);
