@@ -23,12 +23,16 @@ cc_src = $(wildcard *.cc)
 O_FILES := $(c_src:%.c=$(BUILD_DIR)/%.o) $(cc_src:%.cc=$(BUILD_DIR)/%.o)
 
 assets_png = $(wildcard assets/*.png)
+assets_bin = $(wildcard assets/*.bin)
 assets_ttf = $(wildcard assets/*.ttf)
 assets_glb = $(wildcard assets/*.glb)
+assets_gltf = $(wildcard assets/*.gltf)
 
 assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite))) \
 			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64))) \
-			  $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.glb)))
+			  $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.glb))) \
+			  $(addprefix filesystem/,$(notdir $(assets_gltf:%.gltf=%.gltf))) \
+			  $(addprefix filesystem/,$(notdir $(assets_bin:%.bin=%.bin)))
 
 MKSPRITE_FLAGS ?=
 
@@ -55,6 +59,15 @@ filesystem/%.glb: assets/%.glb
 	@echo "    [GLB] $@"
 	cp $< $@
 
+filesystem/%.bin: assets/%.bin
+	@mkdir -p $(dir $@)
+	@echo "    [BIN] $@"
+	cp $< $@
+
+filesystem/%.gltf: assets/%.gltf
+	@mkdir -p $(dir $@)
+	@echo "    [GLTF] $@"
+	cp $< $@
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)

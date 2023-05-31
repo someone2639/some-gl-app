@@ -23,12 +23,13 @@ std::vector<Object2639> objectPool;
 void Object2639::initializeInternalParams() {
     this->_initialized = 0;
     this->_displaylist = 0x2639;
-    this->_texture[0] = 0;
+    this->_texIndex = 0;
+    // this->_texture[0] = 0;
     this->texturePath = nullptr;
     this->_sprite = nullptr;
 }
 
-static void _processSegment(gtGfx *g) {
+static __attribute__((unused)) void _processSegment(gtGfx *g) {
     gtState *gs = g->obj.statep;
 
 
@@ -135,7 +136,8 @@ Object2639::Object2639(std::string glb) : Object2639() {
     std::string err, warn;
     Model model;
 
-    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
+    // bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
+    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, glb);
     assertf(err.empty(), err.c_str());
     assertf(warn.empty(), warn.c_str());
     assert(ret);
@@ -197,6 +199,34 @@ Object2639::Object2639(std::string glb) : Object2639() {
             f32_swap_endianness(texcoords, texcoordAccessor.count * 2);
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glTexCoordPointer(2, GL_FLOAT, sizeof(f32) * 2, texcoords);
+
+// Texture
+            int matIndex = prim.material;
+            struct tinygltf::Material *m = &model.materials[matIndex];
+            PbrMetallicRoughness p = m->pbrMetallicRoughness;
+            TextureInfo ti = p.baseColorTexture;
+
+            Image *im = &model.images[ti.index];
+            std::string texPath = "rom:/";
+
+            int startIdx = im->uri.find(".");
+            texPath += im->uri.replace(startIdx, 7, ".sprite");
+
+            sprite_t *materialSprite = sprite_load(texPath.c_str());
+            assertf(materialSprite != NULL, texPath.c_str());
+ 
+            glGenTextures(1, &this->_texture[this->_texIndex]);
+            glBindTexture(GL_TEXTURE_2D, this->_texture[this->_texIndex]);
+            this->_texIndex++;
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+            surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
+            glTexImageN64(GL_TEXTURE_2D, 0, &surf);
+
 
 // Triangle Indices
             const Accessor &indexAccessor = model.accessors[prim.indices];

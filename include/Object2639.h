@@ -26,7 +26,8 @@ class Object2639 {
     private:
         // internal params
         u32 _initialized;
-        GLuint _texture[1];
+        GLuint _texture[32];
+        u32 _texIndex;
         sprite_t *_sprite;
         GLuint _displaylist;
 

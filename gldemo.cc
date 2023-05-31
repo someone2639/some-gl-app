@@ -228,7 +228,8 @@ int main() {
     // assert(ret);
 
     // Object2639::RegisterModel("rom:/alphatest2.glb");
-    Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
+    // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
+    Object2639::RegisterModel("rom:/BOB_gltf.gltf");
 
     Timer renderTimer = Timer::RegisterTimer("Render a Cube");
     Timer displayTimer = Timer::RegisterTimer("Display");
