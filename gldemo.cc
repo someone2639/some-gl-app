@@ -187,6 +187,14 @@ void render() {
 
 #include <rdpq_debug.h>
 
+bool ImageNull(Image *im, const int a1, std::string *a2,
+               std::string *a3, int a4, int a5,  const unsigned char *a6,
+               int a7, void *user_pointer)
+{
+    return true;
+}
+
+
 int main() {
     TinyGLTF _loader;
     std::string err;
@@ -196,12 +204,14 @@ int main() {
     
     dfs_init(DFS_DEFAULT_LOCATION);
 
+    _loader.SetImageLoader(ImageNull, nullptr);
+
 
     display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, ANTIALIAS_RESAMPLE_FETCH_ALWAYS);
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
 
     gl_init();
-    rdpq_debug_start();
+    // rdpq_debug_start();
 
     controller_init();
 
@@ -235,10 +245,10 @@ int main() {
         rdpq_attach(disp, &zbuffer);
 
 
-        rdpq_debug_log(true);
-        __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
+        // rdpq_debug_log(true);
+        // __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
         render();
-        rdpq_debug_log(false);
+        // rdpq_debug_log(false);
 
         // rdpq_debug_stop();
 
