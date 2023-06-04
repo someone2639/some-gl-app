@@ -27,12 +27,14 @@ assets_bin = $(wildcard assets/*.bin)
 assets_ttf = $(wildcard assets/*.ttf)
 assets_glb = $(wildcard assets/*.glb)
 assets_gltf = $(wildcard assets/*.gltf)
+assets_collision = $(wildcard assets/*.collision)
 
 assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite))) \
 			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64))) \
 			  $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.glb))) \
 			  $(addprefix filesystem/,$(notdir $(assets_gltf:%.gltf=%.gltf))) \
-			  $(addprefix filesystem/,$(notdir $(assets_bin:%.bin=%.bin)))
+			  $(addprefix filesystem/,$(notdir $(assets_bin:%.bin=%.bin))) \
+			  $(addprefix filesystem/,$(notdir $(assets_collision:%.collision=%.collision)))
 
 MKSPRITE_FLAGS ?=
 
@@ -63,6 +65,13 @@ filesystem/%.bin: assets/%.bin
 	@mkdir -p $(dir $@)
 	@echo "    [BIN] $@"
 	cp $< $@
+
+filesystem/%.collision: assets/%.collision
+	@mkdir -p $(dir $@)
+	@echo "    [COLLISION] $@"
+	$(N64_CC) -c -xc $(N64_CFLAGS) -I include/ -o /tmp/${@F}.o $<
+	$(N64_LD) -e 0 -Trodata=0x00000000 -o /tmp/${@F}.elf /tmp/${@F}.o
+	$(N64_OBJCOPY) -S -j .rodata -O binary /tmp/${@F}.elf $@
 
 filesystem/%.gltf: assets/%.gltf
 	@mkdir -p $(dir $@)

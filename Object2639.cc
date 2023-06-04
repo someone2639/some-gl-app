@@ -227,6 +227,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
             int startIdx = im->uri.find(".");
             texPath += im->uri.replace(startIdx, 7, ".sprite");
 
+
             sprite_t *materialSprite = sprite_load(texPath.c_str());
             assertf(materialSprite != NULL, texPath.c_str());
  
@@ -270,11 +271,19 @@ Object2639::Object2639(std::string glb) : Object2639() {
                 u16_swap_endianness(bb, indexAccessor.count);
             }
 
+            if (texPath.find("decal") != std::string::npos) {
+                glDepthFunc(GL_EQUAL);
+            }
+            
             glDrawElements(GL_TRIANGLES, indexAccessor.count, indexAccessor.componentType,
                 &indexBuffer.data[
                     indexBufferView.byteOffset + indexAccessor.byteOffset
                 ]
             );
+
+            if (texPath.find("decal") != std::string::npos) {
+                glDepthFunc(GL_LESS);
+            }
         }
     }
 

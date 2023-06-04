@@ -7,7 +7,7 @@ extern struct controller_data gHeldButtons;
 
 
 // #define abs(val) ((val) < 0 ? (-(val)) : (val))
-#define ContRead(num, field) gPressedButtons.c[num].field
+#define ContRead(num, field) gHeldButtons.c[num].field
 #define ContReadHeld(num, field) gPressedButtons.c[num].field
 
 
