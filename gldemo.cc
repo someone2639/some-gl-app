@@ -177,15 +177,15 @@ void render() {
     
     static u32 lighttoggle = 0;
 
-    // if (ContRead(0, L)) {
-    //     lighttoggle ^= 1;
-    // }
-        // static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
-        // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
+    if (ContRead(0, L)) {
+        lighttoggle ^= 1;
+    }
 
     // if (lighttoggle) {
-        static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
+        static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
+        // static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
+        // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
     // } else {
     // }
 
