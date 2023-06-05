@@ -177,37 +177,39 @@ void render() {
     
     static u32 lighttoggle = 0;
 
-    if (ContRead(0, L)) {
-        lighttoggle ^= 1;
-    }
+    // if (ContRead(0, L)) {
+    //     lighttoggle ^= 1;
+    // }
+        // static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
+        // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
 
-    if (lighttoggle) {
+    // if (lighttoggle) {
         static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
-    } else {
-        static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
-    }
+    // } else {
+    // }
 
 
 // i try to do a point light
     static const GLfloat sunset_color[] = {0.62, 0.45, 0.05, 1.0};
     glLightfv(GL_LIGHT0, GL_DIFFUSE, sunset_color);
-    static const GLfloat light_pos[] = {0, 0, 50.0f, 1.0f};
+
+    // some tutorial told me the 4th value needs to be nonzero
+    static const GLfloat light_pos[] = {0, 50.0f, 0, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
-    float light_radius = 20.0f;
+    float light_radius = 500.0f;
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 2.0f/light_radius);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f/(light_radius*light_radius));
     // static GLfloat sunset_diffuse[] = {0.62, 0.45, 0.05, 1.0};
     // glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, sunset_diffuse);
         
-    // if (lighttoggle) {
-    //     glEnable(GL_LIGHT0);
-    // } else {
-    //     glDisable(GL_LIGHT0);
-    //     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, sunset_diffuse);
-    // }
+    if (lighttoggle) {
+        glEnable(GL_LIGHT0);
+    } else {
+        glDisable(GL_LIGHT0);
+        // glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, sunset_diffuse);
+    }
 
     // static const GLfloat difLight0[4] = {0.5f, 0.5f, 0.5f, 1.0f};
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, difLight0);
