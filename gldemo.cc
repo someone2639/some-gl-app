@@ -10,8 +10,6 @@
 #include <tiny_gltf.h>
 using namespace tinygltf;
 
-
-
 #include "2639_defs.h"
 #include "Object2639.h"
 #include "camera.h"
@@ -27,54 +25,7 @@ struct controller_data __attribute__((aligned(8))) gHeldButtons;
 
 static surface_t zbuffer;
 
-void load_texture(GLenum target, sprite_t *sprite) {
-    surface_t surf = sprite_get_lod_pixels(sprite, 0);
-    glTexImageN64(target, 0, &surf);
-}
-
-sprite_t *load_tex(GLuint *tex, char *path) {
-    sprite_t *sprite = sprite_load(path);
-
-
-    glGenTextures(1, tex);
-
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    load_texture(GL_TEXTURE_2D, sprite);
-
-    return sprite;
-}
-
-void get_tex(GLuint *tex, char *path) {
-    sprite_t *sprite = sprite_load(path);
-
-
-    glGenTextures(1, tex);
-
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    load_texture(GL_TEXTURE_2D, sprite);
-}
-
 extern Object2639 Test_Obj;
-
-void dbg_drawtex(u32 x, u32 y, char *path) {
-    static GLuint tex[1];
-
-    sprite_t *sprite = load_tex(tex, path);
-    // debug sprite blit
-    surface_t pxl = sprite_get_pixels(sprite);
-    // uint16_t *tex_pal = sprite_get_palette(&tex);
-    rdpq_set_mode_copy(false);
-    // rdpq_tex_load_tlut(tex_pal, 0, 256);
-    rdpq_tex_blit(&pxl, x, y, NULL);
-}
 
 void printDebug() {
     char buf[30];
