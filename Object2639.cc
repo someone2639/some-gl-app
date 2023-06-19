@@ -67,10 +67,6 @@ void Object2639::render() {
 
     glScalef(this->scale.x, this->scale.y, this->scale.z);
 
-    if (this->texturePath != nullptr) {
-        glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
-    }
-
     // assert((glIsList(this->_displaylist) == GL_TRUE));
     glCallList(this->_displaylist);
 
@@ -147,7 +143,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
 
     glNewList(this->_displaylist, GL_COMPILE);
     assert(glGetError() == 0);
-    glBegin(GL_TRIANGLES);
+    // glBegin(GL_TRIANGLES);
 
     // std::vector<Mesh> deferredMeshes;
 
@@ -228,33 +224,38 @@ Object2639::Object2639(std::string glb) : Object2639() {
             texPath += im->uri.replace(startIdx, 7, ".sprite");
 
 
-            sprite_t *materialSprite = sprite_load(texPath.c_str());
-            assertf(materialSprite != NULL, texPath.c_str());
+            // sprite_t *materialSprite = sprite_load(texPath.c_str());
+            // assertf(materialSprite != NULL, texPath.c_str());
  
-            glGenTextures(1, &this->_texture[this->_texIndex]);
-            glBindTexture(GL_TEXTURE_2D, this->_texture[this->_texIndex]);
-            this->_texIndex++;
+            // glGenTextures(1, &this->_texture[this->_texIndex]);
+            // glBindTexture(GL_TEXTURE_2D, this->_texture[this->_texIndex]);
+            // this->_texIndex++;
 
-            Texture *tx = &model.textures[ti.index];
-            Sampler *sm = &model.samplers[tx->sampler];
-            if (sm->wrapS == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,  GL_MIRRORED_REPEAT_ARB);
-            } else {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            }
+            // Texture *tx = &model.textures[ti.index];
+            // Sampler *sm = &model.samplers[tx->sampler];
+            // if (sm->wrapS == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
+            //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,  GL_MIRRORED_REPEAT_ARB);
+            // } else {
+            //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            // }
 
-            if (sm->wrapT == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,  GL_MIRRORED_REPEAT_ARB);
-            } else {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            }
+            // if (sm->wrapT == TINYGLTF_TEXTURE_WRAP_MIRRORED_REPEAT) {
+            //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,  GL_MIRRORED_REPEAT_ARB);
+            // } else {
+            //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            // }
 
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-            surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
-            glTexImageN64(GL_TEXTURE_2D, 0, &surf);
+            // static rdpq_texparms_t makeItCompile;
+
+            // makeItCompile.s.repeats = REPEAT_INFINITE;
+            // makeItCompile.s.repeats = REPEAT_INFINITE;
+
+            // surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
+            // // glSurfaceTexImageN64(GL_TEXTURE_2D, 0, &surf, &makeItCompile);
 
 
 // Triangle Indices
@@ -287,7 +288,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
         }
     }
 
-    glEnd();
+    // glEnd();
     glEndList();
     assert(glGetError() == 0);
     assert((glIsList(this->_displaylist) == GL_TRUE));
@@ -304,21 +305,21 @@ void Object2639::update() {
         if (this->init != nullptr) {
             this->init(this);
         }
-        if (this->texturePath != NULL) {
-            this->_sprite = sprite_load(this->texturePath);
-            assert(this->_sprite != NULL);
+        // if (this->texturePath != NULL) {
+        //     this->_sprite = sprite_load(this->texturePath);
+        //     assert(this->_sprite != NULL);
 
-            glGenTextures(1, this->_texture);
-            glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
+        //     glGenTextures(1, this->_texture);
+        //     glBindTexture(GL_TEXTURE_2D, this->_texture[0]);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-            surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
-            glTexImageN64(GL_TEXTURE_2D, 0, &surf);
-        }
+        //     surface_t surf = sprite_get_lod_pixels(this->_sprite, 0);
+        //     glTexImageN64(GL_TEXTURE_2D, 0, &surf);
+        // }
 
         this->_initialized = 1;
         assert((glIsList(this->_displaylist) == GL_TRUE));

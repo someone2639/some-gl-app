@@ -191,14 +191,17 @@ void render() {
 
 
 // i try to do a point light
-    static const GLfloat sunset_color[] = {0.62, 0.45, 0.05, 1.0};
+    // static const GLfloat sunset_color[] = {0.62, 0.45, 0.05, 1.0};
+    // glLightfv(GL_LIGHT0, GL_DIFFUSE, sunset_color);
+
+    static const GLfloat sunset_color[] = {1.0, 1.0, 1.0, 1.0};
     glLightfv(GL_LIGHT0, GL_DIFFUSE, sunset_color);
 
     // some tutorial told me the 4th value needs to be nonzero
     static const GLfloat light_pos[] = {0, 50.0f, 0, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
-    float light_radius = 500.0f;
+    float light_radius = 100.0f;
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 2.0f/light_radius);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f/(light_radius*light_radius));
     // static GLfloat sunset_diffuse[] = {0.62, 0.45, 0.05, 1.0};
@@ -280,6 +283,7 @@ int main() {
     // Object2639::RegisterModel("rom:/alphatest2.glb");
     // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
     Object2639::RegisterModel("rom:/BOB_gltf.gltf");
+    // Object2639::RegisterModel("rom:/human_low.gltf");
 
     Timer renderTimer = Timer::RegisterTimer("Render a Cube");
     Timer displayTimer = Timer::RegisterTimer("Display");
