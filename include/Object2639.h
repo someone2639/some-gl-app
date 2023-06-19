@@ -14,12 +14,16 @@
 #include <tiny_gltf.h>
 using namespace tinygltf;
 
+#define O_TEXCOUNT 32
 
 class Object2639 {
     private:
         // internal params
         u32 _initialized;
-        GLuint _texture[32];
+
+        // TODO: more texture control
+        GLuint _texture[O_TEXCOUNT];
+        rdpq_texparms_t _texParams[O_TEXCOUNT];
         u32 _texIndex;
         sprite_t *_sprite;
         GLuint _displaylist;

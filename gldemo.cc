@@ -38,10 +38,10 @@ sprite_t *load_tex(GLuint *tex, char *path) {
 
     glGenTextures(1, tex);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     load_texture(GL_TEXTURE_2D, sprite);
 
@@ -54,10 +54,10 @@ void get_tex(GLuint *tex, char *path) {
 
     glGenTextures(1, tex);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     load_texture(GL_TEXTURE_2D, sprite);
 }
@@ -143,8 +143,8 @@ void printTimers() {
 
 
 void render() {
-    // static const GLubyte bgColor[] = {0, 255, 229, 255};
-    static const GLubyte bgColor[] = {0, 0, 0, 255};
+    static const GLubyte bgColor[] = {0, 255, 229, 255};
+    // static const GLubyte bgColor[] = {0, 0, 0, 255};
 
     gl_context_begin();
 
@@ -182,10 +182,10 @@ void render() {
     }
 
     // if (lighttoggle) {
-        static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
-        // static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
-        // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
+        // static GLfloat dusk_diffuse[] = {0.07, 0.05, 0.24, 1.0};
+        // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, dusk_diffuse);
+        static const GLfloat environment_color[] = { 1.0f, 1.0f, 1.0f, 1.f };
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
     // } else {
     // }
 
@@ -232,7 +232,6 @@ void render() {
 
 // OBJECT UPDATE
     UpdateObjects();
-
 
     gl_context_end();
 }
@@ -309,10 +308,12 @@ int main() {
 
         renderTimer.end();
 
-        rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
-        printDebug();
-        // printTimers();
-        rdpq_font_end();
+        // rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
+        // // printDebug();
+        // // printTimers();
+        // rdpq_font_end();
+
+
         rdpq_detach_show();
 
         displayTimer.end();
