@@ -24,6 +24,7 @@ class Object2639 {
         // TODO: more texture control
         GLuint _texture[O_TEXCOUNT];
         rdpq_texparms_t _texParams[O_TEXCOUNT];
+        bool hasTexture[O_TEXCOUNT];
         u32 _texIndex;
         sprite_t *_sprite;
         GLuint _displaylist;
