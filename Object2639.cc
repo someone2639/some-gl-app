@@ -218,7 +218,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
 // Normals
             const Accessor& normalAccessor = model.accessors[prim.attributes["NORMAL"]];
             const BufferView& normalBufferView = model.bufferViews[normalAccessor.bufferView];
-            const Buffer &normalBuf = model.buffers[bufferView.buffer];
+            const Buffer &normalBuf = model.buffers[normalBufferView.buffer];
 
             f32 *normals = (f32 *)(&normalBuf.data[
                 normalBufferView.byteOffset + normalAccessor.byteOffset
@@ -237,7 +237,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
 // Colors
             const Accessor& colorAccessor = model.accessors[prim.attributes["COLOR_0"]];
             const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
-            const Buffer &colorBuf = model.buffers[bufferView.buffer];
+            const Buffer &colorBuf = model.buffers[colorBufferView.buffer];
 
             u32 colorVecLen = colorAccessor.type; // should be either 2, 3, or 4
             // assert(colorVecLen == 3);
@@ -262,7 +262,7 @@ Object2639::Object2639(std::string glb) : Object2639() {
 // Texture Coords
             const Accessor& texcoordAccessor = model.accessors[prim.attributes["TEXCOORD_0"]];
             const BufferView& texcoordBufferView = model.bufferViews[texcoordAccessor.bufferView];
-            const Buffer &texcoordBuf = model.buffers[bufferView.buffer];
+            const Buffer &texcoordBuf = model.buffers[texcoordBufferView.buffer];
 
 
             f32 *texcoords = (f32 *)(&texcoordBuf.data[
