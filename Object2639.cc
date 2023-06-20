@@ -203,9 +203,17 @@ Object2639::Object2639(std::string glb) : Object2639() {
             const Buffer &b = model.buffers[bufferView.buffer];
 
             f32 *positions = (f32 *)(&b.data[bufferView.byteOffset + accessor.byteOffset]);
-            f32_swap_endianness(positions, accessor.count * 3);
+            f32_swap_endianness(
+                positions,
+                accessor.count * accessor.type
+            );
             glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(3, GL_FLOAT, sizeof(f32) * 3, positions);
+            glVertexPointer(
+                accessor.type,
+                accessor.componentType,
+                sizeof(f32) * accessor.type,
+                positions
+            );
 
 // Normals
             const Accessor& normalAccessor = model.accessors[prim.attributes["NORMAL"]];
@@ -215,29 +223,39 @@ Object2639::Object2639(std::string glb) : Object2639() {
             f32 *normals = (f32 *)(&normalBuf.data[
                 normalBufferView.byteOffset + normalAccessor.byteOffset
             ]);
-            f32_swap_endianness(normals, normalAccessor.count * 3);
+            f32_swap_endianness(
+                normals,
+                normalAccessor.count * normalAccessor.type
+            );
             glEnableClientState(GL_NORMAL_ARRAY);
-            glNormalPointer(GL_FLOAT, sizeof(f32) * 3, normals);
+            glNormalPointer(
+                normalAccessor.componentType,
+                sizeof(f32) * normalAccessor.type,
+                normals
+            );
 
 // Colors
             const Accessor& colorAccessor = model.accessors[prim.attributes["COLOR_0"]];
             const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
             const Buffer &colorBuf = model.buffers[bufferView.buffer];
 
+            u32 colorVecLen = colorAccessor.type; // should be either 2, 3, or 4
+            // assert(colorVecLen == 3);
+
             if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
                 u16 *colors = (u16 *)(&colorBuf.data[
                     colorBufferView.byteOffset + colorAccessor.byteOffset
                 ]);
-                u16_swap_endianness(colors, colorAccessor.count * 4);
+                u16_swap_endianness(colors, colorAccessor.count * colorVecLen);
                 glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(4, GL_UNSIGNED_SHORT, sizeof(u16) * 4, colors);
+                glColorPointer(colorVecLen, GL_UNSIGNED_SHORT, sizeof(u16) * colorVecLen, colors);
             } else if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
                 f32 *colors = (f32 *)(&colorBuf.data[
                     colorBufferView.byteOffset + colorAccessor.byteOffset
                 ]);
-                f32_swap_endianness(colors, colorAccessor.count * 4);
+                f32_swap_endianness(colors, colorAccessor.count * colorVecLen);
                 glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(4, GL_FLOAT, sizeof(float) * 4, colors);
+                glColorPointer(colorVecLen, GL_FLOAT, sizeof(float) * colorVecLen, colors);
             }
                 
 
@@ -250,9 +268,16 @@ Object2639::Object2639(std::string glb) : Object2639() {
             f32 *texcoords = (f32 *)(&texcoordBuf.data[
                 texcoordBufferView.byteOffset + texcoordAccessor.byteOffset
             ]);
-            f32_swap_endianness(texcoords, texcoordAccessor.count * 2);
+            f32_swap_endianness(texcoords,
+                texcoordAccessor.count * texcoordAccessor.type
+            );
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(2, GL_FLOAT, sizeof(f32) * 2, texcoords);
+            glTexCoordPointer(
+                texcoordAccessor.type,
+                texcoordAccessor.componentType,
+                sizeof(f32) * texcoordAccessor.type,
+                texcoords
+            );
 
 // Texture properties
             PbrMetallicRoughness p = m->pbrMetallicRoughness;
@@ -290,11 +315,22 @@ Object2639::Object2639(std::string glb) : Object2639() {
             // if (texPath.find("decal") != std::string::npos) {
             //     glDepthFunc(GL_EQUAL);
             // }
-            
-            // assertf(indexAccessor.count != 0, "Nothing to draw!");
+
+            u32 mode = GL_TRIANGLES;
+            switch (prim.mode) {
+                case TINYGLTF_MODE_POINTS: mode = GL_POINTS; break;
+                case TINYGLTF_MODE_LINE: mode = GL_LINE; break;
+                case TINYGLTF_MODE_LINE_LOOP: mode = GL_LINE_LOOP; break;
+                case TINYGLTF_MODE_LINE_STRIP: mode = GL_LINE_STRIP; break;
+                case TINYGLTF_MODE_TRIANGLES: mode = GL_TRIANGLES; break;
+                case TINYGLTF_MODE_TRIANGLE_STRIP: mode = GL_TRIANGLE_STRIP; break;
+                case TINYGLTF_MODE_TRIANGLE_FAN: mode = GL_TRIANGLE_FAN; break;
+            }
 
 
-            glDrawElements(GL_TRIANGLES, indexAccessor.count, indexAccessor.componentType,
+            // assertf(0, "%d", indexAccessor.componentType);
+
+            glDrawElements(mode, indexAccessor.count, indexAccessor.componentType,
                 &indexBuffer.data[
                     indexBufferView.byteOffset + indexAccessor.byteOffset
                 ]
