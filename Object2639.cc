@@ -198,20 +198,22 @@ Object2639::Object2639(std::string glb) : Object2639() {
             }
 
 // Positions
-            const Accessor& accessor = model.accessors[prim.attributes["POSITION"]];
-            const BufferView& bufferView = model.bufferViews[accessor.bufferView];
-            const Buffer &b = model.buffers[bufferView.buffer];
+            const Accessor& vtxPosAccessor = model.accessors[prim.attributes["POSITION"]];
+            const BufferView& vtxPosBufferView = model.bufferViews[vtxPosAccessor.bufferView];
+            const Buffer &vtxPosBuffer = model.buffers[vtxPosBufferView.buffer];
 
-            f32 *positions = (f32 *)(&b.data[bufferView.byteOffset + accessor.byteOffset]);
+            f32 *positions = (f32 *)(&vtxPosBuffer.data[
+                vtxPosBufferView.byteOffset + vtxPosAccessor.byteOffset
+            ]);
             f32_swap_endianness(
                 positions,
-                accessor.count * accessor.type
+                vtxPosAccessor.count * vtxPosAccessor.type
             );
             glEnableClientState(GL_VERTEX_ARRAY);
             glVertexPointer(
-                accessor.type,
-                accessor.componentType,
-                sizeof(f32) * accessor.type,
+                vtxPosAccessor.type,
+                vtxPosAccessor.componentType,
+                sizeof(f32) * vtxPosAccessor.type,
                 positions
             );
 
@@ -239,23 +241,36 @@ Object2639::Object2639(std::string glb) : Object2639() {
             const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
             const Buffer &colorBuf = model.buffers[colorBufferView.buffer];
 
-            u32 colorVecLen = colorAccessor.type; // should be either 2, 3, or 4
-            // assert(colorVecLen == 3);
-
             if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
                 u16 *colors = (u16 *)(&colorBuf.data[
                     colorBufferView.byteOffset + colorAccessor.byteOffset
                 ]);
-                u16_swap_endianness(colors, colorAccessor.count * colorVecLen);
+                u16_swap_endianness(
+                    colors,
+                    colorAccessor.count * colorAccessor.type
+                );
                 glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(colorVecLen, GL_UNSIGNED_SHORT, sizeof(u16) * colorVecLen, colors);
+                glColorPointer(
+                    colorAccessor.type,
+                    colorAccessor.componentType,
+                    sizeof(u16) * colorAccessor.type,
+                    colors
+                );
             } else if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
                 f32 *colors = (f32 *)(&colorBuf.data[
                     colorBufferView.byteOffset + colorAccessor.byteOffset
                 ]);
-                f32_swap_endianness(colors, colorAccessor.count * colorVecLen);
+                f32_swap_endianness(
+                    colors,
+                    colorAccessor.count * colorAccessor.type
+                );
                 glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(colorVecLen, GL_FLOAT, sizeof(float) * colorVecLen, colors);
+                glColorPointer(
+                    colorAccessor.type,
+                    colorAccessor.componentType,
+                    sizeof(float) * colorAccessor.type,
+                    colors
+                );
             }
                 
 
