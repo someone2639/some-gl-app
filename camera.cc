@@ -169,5 +169,12 @@ void CameraUpdate() {
         sCameraLook.x, sCameraLook.y, sCameraLook.z,
         0,1,0
     );
+
+    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
+    float near_plane = 5.0f;
+    float far_plane = 2000.0f;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, aspect_ratio, near_plane, far_plane);
 }
 
