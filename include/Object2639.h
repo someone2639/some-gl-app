@@ -31,6 +31,12 @@ class Object2639 {
 
         void initializeInternalParams();
 
+        // helper functions for dl loading
+        void loadVertexPositions(Model &model, Primitive &prim);
+        void loadNormals(Model &model, Primitive &prim);
+        void loadColors(Model &model, Primitive &prim);
+        void loadUVs(Model &model, Primitive &prim);
+        void drawTris(Model &model, Primitive &prim);
 
     public:
         f32 _D;

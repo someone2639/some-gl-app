@@ -226,8 +226,8 @@ int main() {
 
     // Object2639::RegisterModel("rom:/alphatest2.glb");
     // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
-    Object2639::RegisterModel("rom:/BOB_gltf.gltf");
-    // Object2639::RegisterModel("rom:/human_low.gltf");
+    // Object2639::RegisterModel("rom:/BOB_gltf.gltf");
+    Object2639::RegisterModel("rom:/human_low.gltf");
     // Object2639::RegisterModel("rom:/cube.gltf");
     // Object2639::RegisterModel("rom:/human_high.gltf");
 

@@ -10,7 +10,7 @@
 #include "Vector.h"
 
 
-#define MV_SPD 1.0f
+#define MV_SPD 0.2f
 #define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
 #define clampA(x) if ((x) > ANG_CLMP) {(x) = ANG_CLMP;}
@@ -129,7 +129,6 @@ static void CameraUpdate_Free(void) {
         sCameraRPY_Target.pitch += 2;
     }
 
-    #define MV_SPD 0.5f
     if (ContReadHeld(0, A)) {
         sCameraSpot_Target.y += MV_SPD;
     }
@@ -170,6 +169,7 @@ void CameraUpdate() {
         0,1,0
     );
 
+// TODO: modulate this with gltf camera somehow
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
     float near_plane = 5.0f;
     float far_plane = 2000.0f;

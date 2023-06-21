@@ -21,6 +21,157 @@ using namespace tinygltf;
 
 std::vector<Object2639> objectPool;
 
+void Object2639::loadVertexPositions(Model &model, Primitive &prim) {
+    if (prim.attributes.count("POSITION") > 0) {
+        const Accessor& vtxPosAccessor = model.accessors[prim.attributes["POSITION"]];
+        const BufferView& vtxPosBufferView = model.bufferViews[vtxPosAccessor.bufferView];
+        const Buffer &vtxPosBuffer = model.buffers[vtxPosBufferView.buffer];
+
+        f32 *positions = (f32 *)(&vtxPosBuffer.data[
+            vtxPosBufferView.byteOffset + vtxPosAccessor.byteOffset
+        ]);
+        f32_swap_endianness(
+            positions,
+            vtxPosAccessor.count * vtxPosAccessor.type
+        );
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(
+            vtxPosAccessor.type,
+            vtxPosAccessor.componentType,
+            sizeof(f32) * vtxPosAccessor.type,
+            positions
+        );
+    } else {
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+}
+
+void Object2639::loadNormals(Model &model, Primitive &prim) {
+    if (prim.attributes.count("NORMAL") > 0) {
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        const Accessor& normalAccessor = model.accessors[prim.attributes["NORMAL"]];
+        const BufferView& normalBufferView = model.bufferViews[normalAccessor.bufferView];
+        const Buffer &normalBuf = model.buffers[normalBufferView.buffer];
+
+        f32 *normals = (f32 *)(&normalBuf.data[
+            normalBufferView.byteOffset + normalAccessor.byteOffset
+        ]);
+        f32_swap_endianness(
+            normals,
+            normalAccessor.count * normalAccessor.type
+        );
+        glNormalPointer(
+            normalAccessor.componentType,
+            sizeof(f32) * normalAccessor.type,
+            normals
+        );
+    } else {
+        glDisableClientState(GL_NORMAL_ARRAY);
+    }
+}
+
+void Object2639::loadColors(Model &model, Primitive &prim) {
+    if (prim.attributes.count("COLOR_0") > 0) {
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        const Accessor& colorAccessor = model.accessors[prim.attributes["COLOR_0"]];
+        const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
+        const Buffer &colorBuf = model.buffers[colorBufferView.buffer];
+
+        if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+            u16 *colors = (u16 *)(&colorBuf.data[
+                colorBufferView.byteOffset + colorAccessor.byteOffset
+            ]);
+            u16_swap_endianness(
+                colors,
+                colorAccessor.count * colorAccessor.type
+            );
+            glColorPointer(
+                colorAccessor.type,
+                colorAccessor.componentType,
+                sizeof(u16) * colorAccessor.type,
+                colors
+            );
+        } else if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+            f32 *colors = (f32 *)(&colorBuf.data[
+                colorBufferView.byteOffset + colorAccessor.byteOffset
+            ]);
+            f32_swap_endianness(
+                colors,
+                colorAccessor.count * colorAccessor.type
+            );
+            glColorPointer(
+                colorAccessor.type,
+                colorAccessor.componentType,
+                sizeof(float) * colorAccessor.type,
+                colors
+            );
+        }
+    } else {
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+}
+
+void Object2639::loadUVs(Model &model, Primitive &prim) {
+    if (prim.attributes.count("TEXCOORD_0") > 0) {
+        const Accessor& texcoordAccessor = model.accessors[prim.attributes["TEXCOORD_0"]];
+        const BufferView& texcoordBufferView = model.bufferViews[texcoordAccessor.bufferView];
+        const Buffer &texcoordBuf = model.buffers[texcoordBufferView.buffer];
+
+
+        f32 *texcoords = (f32 *)(&texcoordBuf.data[
+            texcoordBufferView.byteOffset + texcoordAccessor.byteOffset
+        ]);
+        f32_swap_endianness(texcoords,
+            texcoordAccessor.count * texcoordAccessor.type
+        );
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(
+            texcoordAccessor.type,
+            texcoordAccessor.componentType,
+            sizeof(f32) * texcoordAccessor.type,
+            texcoords
+        );
+    } else {
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+}
+
+void Object2639::drawTris(Model &model, Primitive &prim) {
+    const Accessor &indexAccessor = model.accessors[prim.indices];
+    const BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
+    const Buffer& indexBuffer = model.buffers[indexBufferView.buffer];
+
+    if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT
+     || indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT
+    ) {
+        u16 *bb = (u16*)&indexBuffer.data[
+            indexBufferView.byteOffset + indexAccessor.byteOffset
+        ];
+        u16_swap_endianness(bb, indexAccessor.count);
+    } else {
+        assertf(0, "2639: Unimplemented Component Type %d", indexAccessor.componentType);
+    }
+
+    u32 mode = GL_TRIANGLES;
+    switch (prim.mode) {
+        case TINYGLTF_MODE_POINTS: mode = GL_POINTS; break;
+        case TINYGLTF_MODE_LINE: mode = GL_LINE; break;
+        case TINYGLTF_MODE_LINE_LOOP: mode = GL_LINE_LOOP; break;
+        case TINYGLTF_MODE_LINE_STRIP: mode = GL_LINE_STRIP; break;
+        case TINYGLTF_MODE_TRIANGLES: mode = GL_TRIANGLES; break;
+        case TINYGLTF_MODE_TRIANGLE_STRIP: mode = GL_TRIANGLE_STRIP; break;
+        case TINYGLTF_MODE_TRIANGLE_FAN: mode = GL_TRIANGLE_FAN; break;
+    }
+    glDrawElements(mode, indexAccessor.count, indexAccessor.componentType,
+        &indexBuffer.data[
+            indexBufferView.byteOffset + indexAccessor.byteOffset
+        ]
+    );
+}
+
+
 void Object2639::initializeInternalParams() {
     this->_initialized = 0;
     this->_displaylist = 0x2639;
@@ -104,6 +255,7 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
         Mesh mes = model.meshes[n.mesh];
 
         for (Primitive &prim : mes.primitives) {
+// TEXTURES
             int matIndex = prim.material;
             struct tinygltf::Material *m = &model.materials[matIndex];
 
@@ -160,8 +312,8 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             }
 
-            surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
-            glSurfaceTexImageN64(GL_TEXTURE_2D, 0, &surf, &this->_texParams[this->_texIndex]);
+            // surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
+            glSpriteTextureN64(GL_TEXTURE_2D, materialSprite, &this->_texParams[this->_texIndex]);
 
 
             this->hasTexture[this->_texIndex] = true;
@@ -171,209 +323,107 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
         glNewList(this->_displaylist, GL_COMPILE);
         assert(glGetError() == 0);
 
-        for (Primitive &prim : mes.primitives) {
-            std::string texPath = "rom:/";
 
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-// Material Settings
-            int matIndex = prim.material;
-            struct tinygltf::Material *m = &model.materials[matIndex];
-            if (m->alphaMode == "BLEND") {
-                // deferredMeshes.emplace_back(mes);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
-            if (m->doubleSided == true) {
-                glDisable(GL_CULL_FACE);
-            } else {
-                glEnable(GL_CULL_FACE);
-                glCullFace(GL_BACK);
-            }
+        Node HeadNode;
 
-// Positions
-            if (prim.attributes.count("POSITION") > 0) {
-                const Accessor& vtxPosAccessor = model.accessors[prim.attributes["POSITION"]];
-                const BufferView& vtxPosBufferView = model.bufferViews[vtxPosAccessor.bufferView];
-                const Buffer &vtxPosBuffer = model.buffers[vtxPosBufferView.buffer];
-
-                f32 *positions = (f32 *)(&vtxPosBuffer.data[
-                    vtxPosBufferView.byteOffset + vtxPosAccessor.byteOffset
-                ]);
-                f32_swap_endianness(
-                    positions,
-                    vtxPosAccessor.count * vtxPosAccessor.type
-                );
-                glEnableClientState(GL_VERTEX_ARRAY);
-                glVertexPointer(
-                    vtxPosAccessor.type,
-                    vtxPosAccessor.componentType,
-                    sizeof(f32) * vtxPosAccessor.type,
-                    positions
-                );
-            } else {
-                glDisableClientState(GL_VERTEX_ARRAY);
-            }
-
-// Normals
-            if (prim.attributes.count("NORMAL") > 0) {
-                glEnableClientState(GL_NORMAL_ARRAY);
-
-                const Accessor& normalAccessor = model.accessors[prim.attributes["NORMAL"]];
-                const BufferView& normalBufferView = model.bufferViews[normalAccessor.bufferView];
-                const Buffer &normalBuf = model.buffers[normalBufferView.buffer];
-
-                f32 *normals = (f32 *)(&normalBuf.data[
-                    normalBufferView.byteOffset + normalAccessor.byteOffset
-                ]);
-                f32_swap_endianness(
-                    normals,
-                    normalAccessor.count * normalAccessor.type
-                );
-                glNormalPointer(
-                    normalAccessor.componentType,
-                    sizeof(f32) * normalAccessor.type,
-                    normals
-                );
-            } else {
-                glDisableClientState(GL_NORMAL_ARRAY);
-            }
-
-// Colors
-            if (prim.attributes.count("COLOR_0") > 0) {
-                glEnableClientState(GL_COLOR_ARRAY);
-
-                const Accessor& colorAccessor = model.accessors[prim.attributes["COLOR_0"]];
-                const BufferView& colorBufferView = model.bufferViews[colorAccessor.bufferView];
-                const Buffer &colorBuf = model.buffers[colorBufferView.buffer];
-
-                if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-                    u16 *colors = (u16 *)(&colorBuf.data[
-                        colorBufferView.byteOffset + colorAccessor.byteOffset
-                    ]);
-                    u16_swap_endianness(
-                        colors,
-                        colorAccessor.count * colorAccessor.type
-                    );
-                    glColorPointer(
-                        colorAccessor.type,
-                        colorAccessor.componentType,
-                        sizeof(u16) * colorAccessor.type,
-                        colors
-                    );
-                } else if (colorAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
-                    f32 *colors = (f32 *)(&colorBuf.data[
-                        colorBufferView.byteOffset + colorAccessor.byteOffset
-                    ]);
-                    f32_swap_endianness(
-                        colors,
-                        colorAccessor.count * colorAccessor.type
-                    );
-                    glColorPointer(
-                        colorAccessor.type,
-                        colorAccessor.componentType,
-                        sizeof(float) * colorAccessor.type,
-                        colors
-                    );
-                }
-            } else {
-                glDisableClientState(GL_COLOR_ARRAY);
-            }
-                
-
-// Texture Coords
-            if (prim.attributes.count("TEXCOORD_0") > 0) {
-                const Accessor& texcoordAccessor = model.accessors[prim.attributes["TEXCOORD_0"]];
-                const BufferView& texcoordBufferView = model.bufferViews[texcoordAccessor.bufferView];
-                const Buffer &texcoordBuf = model.buffers[texcoordBufferView.buffer];
-
-
-                f32 *texcoords = (f32 *)(&texcoordBuf.data[
-                    texcoordBufferView.byteOffset + texcoordAccessor.byteOffset
-                ]);
-                f32_swap_endianness(texcoords,
-                    texcoordAccessor.count * texcoordAccessor.type
-                );
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                glTexCoordPointer(
-                    texcoordAccessor.type,
-                    texcoordAccessor.componentType,
-                    sizeof(f32) * texcoordAccessor.type,
-                    texcoords
-                );
-            } else {
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-            }
-
-// Texture properties
-            PbrMetallicRoughness p = m->pbrMetallicRoughness;
-            TextureInfo ti = p.baseColorTexture;
-
-            bool hasTexture = (ti.index != -1);
-
-            if (hasTexture) {
-                Image *im = &model.images[ti.index];
-                int startIdx = im->uri.find(".");
-                texPath += im->uri.replace(startIdx, 7, ".sprite");
-            }
-            if (this->hasTexture[ti.index]) {
-                glBindTexture(GL_TEXTURE_2D, this->_texture[ti.index]);
-
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            }
-
-            
-
-
-// Triangle Indices
-            const Accessor &indexAccessor = model.accessors[prim.indices];
-            const BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
-            const Buffer& indexBuffer = model.buffers[indexBufferView.buffer];
-
-            if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT
-             || indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT
-            ) {
-                u16 *bb = (u16*)&indexBuffer.data[
-                    indexBufferView.byteOffset + indexAccessor.byteOffset
-                ];
-                u16_swap_endianness(bb, indexAccessor.count);
-            } else {
-                assertf(0, "2639: Unimplemented Component Type %d", indexAccessor.componentType);
-            }
-
-            u32 mode = GL_TRIANGLES;
-            switch (prim.mode) {
-                case TINYGLTF_MODE_POINTS: mode = GL_POINTS; break;
-                case TINYGLTF_MODE_LINE: mode = GL_LINE; break;
-                case TINYGLTF_MODE_LINE_LOOP: mode = GL_LINE_LOOP; break;
-                case TINYGLTF_MODE_LINE_STRIP: mode = GL_LINE_STRIP; break;
-                case TINYGLTF_MODE_TRIANGLES: mode = GL_TRIANGLES; break;
-                case TINYGLTF_MODE_TRIANGLE_STRIP: mode = GL_TRIANGLE_STRIP; break;
-                case TINYGLTF_MODE_TRIANGLE_FAN: mode = GL_TRIANGLE_FAN; break;
-            }
-
-
-            if (hasTexture && texPath.find("decal") != std::string::npos) {
-                glDepthFunc(GL_EQUAL);
-            }
-
-            glDrawElements(mode, indexAccessor.count, indexAccessor.componentType,
-                &indexBuffer.data[
-                    indexBufferView.byteOffset + indexAccessor.byteOffset
-                ]
-            );
-
-            if (hasTexture && texPath.find("decal") != std::string::npos) {
-                glDepthFunc(GL_LESS);
+        for (int i : s.nodes) {
+            if (model.nodes[i].skin != -1) {
+                HeadNode = model.nodes[i];
+                // HeadNode.mesh = -1;
+            } else if (model.nodes[i].mesh != -1) {
+                HeadNode = model.nodes[i];
             }
         }
 
-        glEndList();
-        assert(glGetError() == 0);
-        assert((glIsList(this->_displaylist) == GL_TRUE));
-        assert(this->_displaylist == aa);
-        assert((glIsList(aa) == GL_TRUE));
+            // if (n.mesh == -1) continue; // nothing to draw! (Camera, animation, etc.)
+
+            // if (n.translation.size() > 0) {
+            //     if (
+            //         (n.translation[0] == 0)
+            //      && (n.translation[1] == 0)
+            //      && (n.translation[2] == 0)
+            //     ) {
+            //     } else {
+            //         glTranslatef(
+            //             n.translation[0],
+            //             n.translation[1],
+            //             n.translation[2]
+            //         );
+            //     }
+            // }
+
+            // // glRotatef(this->rotate.x, 1, 0, 0);
+            // // glRotatef(this->rotate.y, 0, 1, 0);
+            // // glRotatef(this->rotate.z, 0, 0, 1);
+
+            // if (n.scale.size() > 0) {
+            //     glScalef(
+            //         n.scale[0],
+            //         n.scale[1],
+            //         n.scale[2]
+            //     );
+            // }
+
+        {
+            Mesh mes = model.meshes[HeadNode.mesh];
+            for (Primitive &prim : mes.primitives) {
+                std::string texPath = "rom:/";
+
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+                glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+    // Material Settings
+                int matIndex = prim.material;
+                struct tinygltf::Material *m = &model.materials[matIndex];
+                if (m->alphaMode == "BLEND") {
+                    // deferredMeshes.emplace_back(mes);
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                }
+                if (m->doubleSided == true) {
+                    glDisable(GL_CULL_FACE);
+                } else {
+                    glEnable(GL_CULL_FACE);
+                    glCullFace(GL_BACK);
+                }
+
+                loadVertexPositions(model, prim);
+                loadNormals(model, prim);
+                loadColors(model, prim);
+                loadUVs(model, prim);
+
+    // Texture properties
+                PbrMetallicRoughness p = m->pbrMetallicRoughness;
+                TextureInfo ti = p.baseColorTexture;
+
+                bool hasTexture = (ti.index != -1);
+
+                if (hasTexture) {
+                    Image *im = &model.images[ti.index];
+                    int startIdx = im->uri.find(".");
+                    texPath += im->uri.replace(startIdx, 7, ".sprite");
+                }
+                if (this->hasTexture[ti.index]) {
+                    glBindTexture(GL_TEXTURE_2D, this->_texture[ti.index]);
+
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                }
+
+                if (hasTexture && texPath.find("decal") != std::string::npos) {
+                    glDepthFunc(GL_EQUAL);
+                }
+                drawTris(model, prim);
+                if (hasTexture && texPath.find("decal") != std::string::npos) {
+                    glDepthFunc(GL_LESS);
+                }
+            }
+
+            glEndList();
+            assert(glGetError() == 0);
+            assert((glIsList(this->_displaylist) == GL_TRUE));
+            assert(this->_displaylist == aa);
+            assert((glIsList(aa) == GL_TRUE));
+        }
     }
 }
 
