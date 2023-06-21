@@ -10,7 +10,7 @@
 #include "Vector.h"
 
 
-#define MV_SPD 6.0f
+#define MV_SPD 1.0f
 #define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
 #define clampA(x) if ((x) > ANG_CLMP) {(x) = ANG_CLMP;}
@@ -129,11 +129,12 @@ static void CameraUpdate_Free(void) {
         sCameraRPY_Target.pitch += 2;
     }
 
+    #define MV_SPD 0.5f
     if (ContReadHeld(0, A)) {
-        sCameraSpot_Target.y += 2;
+        sCameraSpot_Target.y += MV_SPD;
     }
     if (ContReadHeld(0, B)) {
-        sCameraSpot_Target.y -= 2;
+        sCameraSpot_Target.y -= MV_SPD;
     }
 
     clampA(sCameraRPY_Target.yaw);
@@ -169,5 +170,4 @@ void CameraUpdate() {
         0,1,0
     );
 }
-
 

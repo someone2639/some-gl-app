@@ -93,22 +93,16 @@ Object2639::Object2639() {
     this->loop = nullptr;
 }
 
-Object2639::Object2639(std::string glb) : Object2639() {
-    std::string err, warn;
-    Model model;
-
-    // bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
-    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, glb);
-    assertf(err.empty(), err.c_str());
-    assertf(warn.empty(), warn.c_str());
-    assert(ret);
-
+Object2639::Object2639(Model &model, Scene &s) : Object2639() {
     GLuint aa = glGenLists(1);
     this->_displaylist = aa;
 
+    for (int i : s.nodes) {
+        Node n = model.nodes[i];
+        if (n.mesh == -1) continue;
 
-// Load in textures from files
-    for (Mesh &mes : model.meshes) {
+        Mesh mes = model.meshes[n.mesh];
+
         for (Primitive &prim : mes.primitives) {
             int matIndex = prim.material;
             struct tinygltf::Material *m = &model.materials[matIndex];
@@ -173,13 +167,10 @@ Object2639::Object2639(std::string glb) : Object2639() {
             this->hasTexture[this->_texIndex] = true;
             this->_texIndex++;
         }
-    }
 
+        glNewList(this->_displaylist, GL_COMPILE);
+        assert(glGetError() == 0);
 
-
-    glNewList(this->_displaylist, GL_COMPILE);
-    assert(glGetError() == 0);
-    for (Mesh &mes : model.meshes) {
         for (Primitive &prim : mes.primitives) {
             std::string texPath = "rom:/";
 
@@ -351,10 +342,6 @@ Object2639::Object2639(std::string glb) : Object2639() {
                 assertf(0, "2639: Unimplemented Component Type %d", indexAccessor.componentType);
             }
 
-            if (hasTexture && texPath.find("decal") != std::string::npos) {
-                glDepthFunc(GL_EQUAL);
-            }
-
             u32 mode = GL_TRIANGLES;
             switch (prim.mode) {
                 case TINYGLTF_MODE_POINTS: mode = GL_POINTS; break;
@@ -367,7 +354,9 @@ Object2639::Object2639(std::string glb) : Object2639() {
             }
 
 
-            // assertf(0, "%d", indexAccessor.componentType);
+            if (hasTexture && texPath.find("decal") != std::string::npos) {
+                glDepthFunc(GL_EQUAL);
+            }
 
             glDrawElements(mode, indexAccessor.count, indexAccessor.componentType,
                 &indexBuffer.data[
@@ -379,17 +368,33 @@ Object2639::Object2639(std::string glb) : Object2639() {
                 glDepthFunc(GL_LESS);
             }
         }
-    }
-    glEndList();
 
-    assert(glGetError() == 0);
-    assert((glIsList(this->_displaylist) == GL_TRUE));
-    assert(this->_displaylist == aa);
-    assert((glIsList(aa) == GL_TRUE));
+        glEndList();
+        assert(glGetError() == 0);
+        assert((glIsList(this->_displaylist) == GL_TRUE));
+        assert(this->_displaylist == aa);
+        assert((glIsList(aa) == GL_TRUE));
+    }
 }
 
 void Object2639::RegisterModel(std::string s) {
-    objectPool.emplace_back(Object2639(s));
+    // we will make one Object2639 for each scene
+    std::string err, warn;
+    Model model;
+
+    // bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
+    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, s);
+    assertf(err.empty(), err.c_str());
+    assertf(warn.empty(), warn.c_str());
+    assert(ret);
+
+    // if (model.cameras.size() > 0) {
+    //     gCamera.setCamera(model.cameras[0]);
+    // }
+
+    for (Scene &s : model.scenes) {
+        objectPool.emplace_back(Object2639(model, s));
+    }
 }
 
 void Object2639::update() {

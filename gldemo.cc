@@ -109,12 +109,6 @@ void render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 5.0f;
-    float far_plane = 500.0f;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
 
 
     glMatrixMode(GL_MODELVIEW);
@@ -171,6 +165,12 @@ void render() {
 // CAMERA
     void CameraUpdate();
     CameraUpdate();
+    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
+    float near_plane = 5.0f;
+    float far_plane = 2000.0f;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, aspect_ratio, near_plane, far_plane);
 
 // ACTION
     glRotatef(0, 0, 1, 0);
@@ -232,8 +232,8 @@ int main() {
 
     // Object2639::RegisterModel("rom:/alphatest2.glb");
     // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
-    // Object2639::RegisterModel("rom:/BOB_gltf.gltf");
-    Object2639::RegisterModel("rom:/human_low.gltf");
+    Object2639::RegisterModel("rom:/BOB_gltf.gltf");
+    // Object2639::RegisterModel("rom:/human_low.gltf");
     // Object2639::RegisterModel("rom:/cube.gltf");
     // Object2639::RegisterModel("rom:/human_high.gltf");
 
@@ -262,8 +262,8 @@ int main() {
         renderTimer.end();
 
         // rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
-        // // printDebug();
-        // // printTimers();
+        // printDebug();
+        // printTimers();
         // rdpq_font_end();
 
 
