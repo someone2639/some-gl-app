@@ -19,8 +19,6 @@ using namespace tinygltf;
 #include "camera.h"
 #include "swap.h"
 
-std::vector<Object2639> objectPool;
-
 void Object2639::loadVertexPositions(Model &model, Primitive &prim) {
     if (prim.attributes.count("POSITION") > 0) {
         const Accessor& vtxPosAccessor = model.accessors[prim.attributes["POSITION"]];
@@ -456,26 +454,6 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
     }
 }
 
-void Object2639::RegisterModel(std::string s) {
-    // we will make one Object2639 for each scene
-    std::string err, warn;
-    Model model;
-
-    // bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, glb);
-    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, s);
-    assertf(err.empty(), err.c_str());
-    assertf(warn.empty(), warn.c_str());
-    assert(ret);
-
-    // if (model.cameras.size() > 0) {
-    //     gCamera.setCamera(model.cameras[0]);
-    // }
-
-    for (Scene &s : model.scenes) {
-        objectPool.emplace_back(Object2639(model, s));
-    }
-}
-
 void Object2639::update() {
     if (this->_initialized == 0) {
         if (this->init != nullptr) {
@@ -492,12 +470,3 @@ void Object2639::update() {
     assert((glIsList(this->_displaylist) == GL_TRUE));
     this->render();
 }
-
-
-void UpdateObjects() {
-    for (Object2639 &i : objectPool) {
-        // i.texturePath = "rom:/grass.sprite";
-        i.update();
-    }
-}
-

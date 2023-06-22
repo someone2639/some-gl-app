@@ -1,5 +1,6 @@
-BUILD_DIR=build
+ROM_NAME = Engine2639
 
+BUILD_DIR=build
 
 # WARNINGS = -Wall -Wextra
 WARNINGS = 
@@ -44,11 +45,11 @@ $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cc
 	@echo "    [CXX] $<"
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-all: gldemo.z64
+all: $(ROM_NAME).z64
 
-test: gldemo.z64
+test: $(ROM_NAME).z64
 	ares $<
-test2: gldemo.z64
+test2: $(ROM_NAME).z64
 	simple64-gui $<
 
 filesystem/%.font64: assets/%.ttf
@@ -83,14 +84,14 @@ filesystem/%.sprite: assets/%.png
 	@echo "    [SPRITE] $@"
 	@$(N64_MKSPRITE) -f RGBA16 --compress -o "$(dir $@)" "$<"
 
-$(BUILD_DIR)/gldemo.dfs: $(assets_conv)
-$(BUILD_DIR)/gldemo.elf: $(O_FILES)
+$(BUILD_DIR)/$(ROM_NAME).dfs: $(assets_conv)
+$(BUILD_DIR)/$(ROM_NAME).elf: $(O_FILES)
 
-gldemo.z64: N64_ROM_TITLE="GL Demo"
-gldemo.z64: $(BUILD_DIR)/gldemo.dfs
+$(ROM_NAME).z64: N64_ROM_TITLE="Engine2639"
+$(ROM_NAME).z64: $(BUILD_DIR)/$(ROM_NAME).dfs
 
 clean:
-	rm -rf filesystem/ $(BUILD_DIR) gldemo.z64
+	rm -rf filesystem/ $(BUILD_DIR) $(ROM_NAME).z64
 
 -include $(wildcard $(BUILD_DIR)/*.d)
 

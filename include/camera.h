@@ -2,6 +2,8 @@
 #include "types.h"
 #include "2639_defs.h"
 
+#include "tiny_gltf.h"
+
 #include "Vector.h"
 
 extern Vector sCameraLook;
@@ -47,6 +49,8 @@ class Camera2639 {
 
         void approach();
     public:
+        Camera2639();
+        Camera2639(tinygltf::Camera &c);
         Camera2639(f32 x, f32 y, f32 z) : look(x, y, z), lookTarget(x, y, z) {};
         void update();
 };

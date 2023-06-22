@@ -1,4 +1,5 @@
 #include <libdragon.h>
+#include <rdpq_debug.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/gl_integration.h>
@@ -12,6 +13,7 @@ using namespace tinygltf;
 
 #include "2639_defs.h"
 #include "Object2639.h"
+#include "Level2639.h"
 #include "camera.h"
 #include "Timer.h"
 
@@ -25,59 +27,10 @@ struct controller_data __attribute__((aligned(8))) gHeldButtons;
 
 static surface_t zbuffer;
 
-extern Object2639 Test_Obj;
 
-Camera2639 gCamera(0, 0, 0);
 
 void printDebug() {
-    char buf[30];
-    sprintf(buf, "%f %f %f",
-        sCameraSpot.x,
-        sCameraSpot.y,
-        sCameraSpot.z
-        );
-
-    char buf2[30];
-    sprintf(buf2, "%f %f %f",
-        sCameraRPY.roll,
-        sCameraRPY.pitch,
-        sCameraRPY.yaw
-        );
-
-
-    extern std::vector<Object2639> objectPool;
-    Object2639 &o = objectPool.back();
-    char buf3[30];
-    sprintf(buf3, "%lf %d", o._D, ContRead(0, y));
-
-    rdpq_font_position(20, 50);
-    rdpq_font_print(fnt1, buf);
-
-
-    rdpq_font_position(20, 70);
-    rdpq_font_print(fnt1, buf2);
-    rdpq_font_position(20, 90);
-    rdpq_font_print(fnt1, buf3);
-
-
-
-    int k = 0;
-    for (auto [v0, v1, v2] : o._DP) {
-        char buf4[50];
-        sprintf(buf4, "%f %f %f", v0, v1, v2);
-        rdpq_font_position(20, 110 + k);
-        rdpq_font_print(fnt1, buf4);
-        k += 10;
-    }
-
-    k = 0;
-    for (auto [v0, v1, v2] : o._DI) {
-        char buf4[50];
-        sprintf(buf4, "%f %f %f", v0, v1, v2);
-        rdpq_font_position(100, 110 + k);
-        rdpq_font_print(fnt1, buf4);
-        k += 10;
-    }
+    
 }
 
 void printTimers() {
@@ -95,7 +48,7 @@ void printTimers() {
 }
 
 
-void render() {
+void render(Level2639 &level) {
     static const GLubyte bgColor[] = {0, 255, 229, 255};
     // static const GLubyte bgColor[] = {0, 0, 0, 255};
 
@@ -165,7 +118,7 @@ void render() {
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, difLight0);
 
 // CAMERA
-    gCamera.update();
+    level.cam.update();
 
 // ACTION
     glRotatef(0, 0, 1, 0);
@@ -176,24 +129,13 @@ void render() {
     glCullFace(GL_BACK);
     glEnable(GL_BLEND);
 
-// OBJECT UPDATE
-    UpdateObjects();
+// LEVEL UPDATE
+    level.update();
 
     gl_context_end();
 }
 
-#include <rdpq_debug.h>
-
-bool ImageNull(Image *im, const int a1, std::string *a2,
-               std::string *a3, int a4, int a5,  const unsigned char *a6,
-               int a7, void *user_pointer)
-{
-    return true;
-}
-
-
 int main() {
-    TinyGLTF _loader;
     std::string err;
     std::string warn;
 	debug_init_isviewer();
@@ -201,14 +143,10 @@ int main() {
     
     dfs_init(DFS_DEFAULT_LOCATION);
 
-    _loader.SetImageLoader(ImageNull, nullptr);
-
-
     display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, ANTIALIAS_RESAMPLE_FETCH_ALWAYS);
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
 
     gl_init();
-    // rdpq_debug_start();
 
     controller_init();
 
@@ -221,12 +159,12 @@ int main() {
 
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
-    // Object2639::RegisterModel("rom:/alphatest2.glb");
-    // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
-    // Object2639::RegisterModel("rom:/BOB_gltf.gltf");
-    Object2639::RegisterModel("rom:/human_low.gltf");
-    // Object2639::RegisterModel("rom:/cube.gltf");
-    // Object2639::RegisterModel("rom:/human_high.gltf");
+    // Level2639 level("rom:/alphatest2.glb");
+    // Level2639 level("rom:/BOB_gltf_test.glb");
+    // Level2639 level("rom:/cube.gltf");
+    // Level2639 level("rom:/human_high.gltf");
+    Level2639 level("rom:/BOB_gltf.gltf");
+    // Level2639 level("rom:/human_low.gltf");
 
     Timer renderTimer = Timer::RegisterTimer("Render a Cube");
     Timer displayTimer = Timer::RegisterTimer("Display");
@@ -245,7 +183,7 @@ int main() {
 
         // rdpq_debug_log(true);
         // __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
-        render();
+        render(level);
         // rdpq_debug_log(false);
 
         // rdpq_debug_stop();

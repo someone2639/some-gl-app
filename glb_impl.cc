@@ -18,5 +18,3 @@ using namespace tinygltf;
 //     int,
 //     void*
 // );
-
-TinyGLTF loader;

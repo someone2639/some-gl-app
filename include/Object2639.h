@@ -40,9 +40,6 @@ class Object2639 {
         void drawTris(Model &model, Primitive &prim);
 
     public:
-        f32 _D;
-        std::vector<std::tuple<float, float, float>> _DP;
-        std::vector<std::tuple<float, float, float>> _DI;
         // serviceable params
         Vector move;
         Vector rotate;
@@ -70,8 +67,4 @@ class Object2639 {
 
         void render();
         void update();
-
-        static void RegisterModel(std::string);
 };
-
-void UpdateObjects();

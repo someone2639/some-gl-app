@@ -149,3 +149,9 @@ void Camera2639::update() {
     gluPerspective(45.0, aspect_ratio, near_plane, far_plane);
 }
 
+Camera2639::Camera2639(tinygltf::Camera &c) {
+
+}
+Camera2639::Camera2639() {
+
+}
