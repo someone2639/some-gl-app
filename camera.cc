@@ -1,23 +1,18 @@
 #include <libdragon.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/gl_integration.h>
-#include <malloc.h>
-#include <math.h>
 
 #include "2639_defs.h"
 #include "camera.h"
 #include "Vector.h"
 
 
-#define MV_SPD 0.2f
+#define MV_SPD 0.6f
 #define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
 #define clampA(x) if ((x) > ANG_CLMP) {(x) = ANG_CLMP;}
 #define clampAN(x) if ((x) < -ANG_CLMP) {(x) = -ANG_CLMP;}
 #define clampZ(x) if ((x) < 0) {(x) = 0;}
-
-u32 gCameraMode = CAMERA_FREEMOVE;
 
 void VectorSubtract (Vector &dest, Vector &v1, Vector &v2) {
     dest.x = v1.x - v2.x;
@@ -87,16 +82,16 @@ void Camera2639::updateFreeMove() {
 
     // #define CAM_YAW (45)
     if (ContReadHeld(0, C_right)) {
-        this->RPYTarget.yaw -= 2;
+        this->RPYTarget.yaw -= ROT_SPD;
     }
     if (ContReadHeld(0, C_left)) {
-        this->RPYTarget.yaw += 2;
+        this->RPYTarget.yaw += ROT_SPD;
     }
     if (ContReadHeld(0, C_up)) {
-        this->RPYTarget.pitch -= 2;
+        this->RPYTarget.pitch -= ROT_SPD;
     }
     if (ContReadHeld(0, C_down)) {
-        this->RPYTarget.pitch += 2;
+        this->RPYTarget.pitch += ROT_SPD;
     }
 
     if (ContReadHeld(0, A)) {
@@ -126,9 +121,9 @@ void Camera2639::update() {
 
     this->updateFreeMove();
 
-    // switch (gCameraMode) {
-    //     case CAMERA_STATIC: CameraApply_RPY(); break;
-    //     case CAMERA_FREEMOVE: CameraUpdate_Free(); break;
+    // switch (this->mode) {
+    //     case CAMERA_STATIC: break;
+    //     case CAMERA_FREEMOVE: this->updateFreeMove(); break;
     //     case CAMERA_CUTSCENE: break;
 
     //     // something else is setting the lookat matrix so we dont care
@@ -143,7 +138,7 @@ void Camera2639::update() {
 // TODO: modulate this with gltf camera somehow
     float aspect_ratio = (float)display_get_width() / (float)display_get_height();
     float near_plane = 5.0f;
-    float far_plane = 2000.0f;
+    float far_plane = 300.0f;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45.0, aspect_ratio, near_plane, far_plane);

@@ -1,22 +1,16 @@
 #include <libdragon.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/gl_integration.h>
-#include <malloc.h>
-#include <math.h>
 
 #include <vector>
 #include <string>
-#include <map>
 
 #include <tiny_gltf.h>
 using namespace tinygltf;
 
 #include "2639_defs.h"
-#include "glb_impl.h"
 #include "Object2639.h"
-#include "Level2639.h"
 #include "camera.h"
+
+#include "Level2639.h"
 
 bool ImageNull(Image *im, const int a1, std::string *a2,
                std::string *a3, int a4, int a5,  const unsigned char *a6,
@@ -26,9 +20,13 @@ bool ImageNull(Image *im, const int a1, std::string *a2,
 }
 
 Level2639::Level2639(std::string gltf) {
-    this->_loader.SetImageLoader(ImageNull, nullptr);
     std::string err, warn;
     Model model;
+
+    // we do texturing locally, and also
+    // tinygltf does not explain this function prototype at all,
+    // so we will not trust it with image loading.
+    this->_loader.SetImageLoader(ImageNull, nullptr);
 
     bool ret = this->_loader.LoadASCIIFromFile(&model, &err, &warn, gltf);
     assertf(err.empty(), err.c_str());
@@ -49,6 +47,8 @@ Level2639::Level2639(std::string gltf) {
 }
 
 void Level2639::update() {
+    this->cam.update();
+
     for (Object2639 &i : this->objects) {
         // i.texturePath = "rom:/grass.sprite";
         i.update();

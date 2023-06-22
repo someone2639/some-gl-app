@@ -4,8 +4,6 @@
 #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include <tiny_gltf.h>
 
-
-
 using namespace tinygltf;
 // void tinygltf::LoadImageData(
 //     tinygltf::Image*,

@@ -12,7 +12,6 @@
 #include <tiny_gltf.h>
 using namespace tinygltf;
 
-
 #include "2639_defs.h"
 #include "glb_impl.h"
 #include "Object2639.h"
@@ -195,7 +194,6 @@ void Object2639::drawTris(Model &model, Primitive &prim) {
         ]
     );
 }
-
 
 void Object2639::initializeInternalParams() {
     this->_initialized = 0;

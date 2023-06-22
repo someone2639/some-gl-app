@@ -22,22 +22,10 @@ enum CameraModes {
     CAMERA_OBJECTMOVE,
 };
 
-extern u32 gCameraMode;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void VectorCopy(Vector * dest, Vector * src);
-void VectorFullApproach(Vector *dest, f32 *src, f32 multiplier);
-void FloatApproach(f32 *dest, f32 *src, f32 multiplier);
-extern void CameraUpdate();
-
-#ifdef __cplusplus
-};
-
 class Camera2639 {
     private:
+        u32 mode;
+
         Vector look;
         Vector lookTarget;
         Vector spot;
@@ -54,5 +42,3 @@ class Camera2639 {
         Camera2639(f32 x, f32 y, f32 z) : look(x, y, z), lookTarget(x, y, z) {};
         void update();
 };
-
-#endif
