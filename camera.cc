@@ -17,31 +17,12 @@
 #define clampAN(x) if ((x) < -ANG_CLMP) {(x) = -ANG_CLMP;}
 #define clampZ(x) if ((x) < 0) {(x) = 0;}
 
-Vector sCameraLook;
-Vector sCameraLook_Target;
-
-Vector sCameraSpot;
-Vector sCameraSpot_Target;
-Vector sCameraRPY;
-Vector sCameraRPY_Target;
-Vector sOrigin;
-
 u32 gCameraMode = CAMERA_FREEMOVE;
 
-void VectorSubtract (Vector *dest, Vector *v1, Vector *v2) {
-    dest->x = v1->x - v2->x;
-    dest->y = v1->y - v2->y;
-    dest->z = v1->z - v2->z;
-}
-
-void FloatApproach(f32 *dest, f32 *src, f32 multiplier) {
-    *dest = *dest + (*src - *dest) * multiplier;
-}
-
-void VectorFullApproach(Vector *dest, f32 *src, f32 multiplier) {
-    dest->x = dest->x + (*src - dest->x) * multiplier;
-    dest->y = dest->y + (*src - dest->y) * multiplier;
-    dest->z = dest->z + (*src - dest->z) * multiplier;
+void VectorSubtract (Vector &dest, Vector &v1, Vector &v2) {
+    dest.x = v1.x - v2.x;
+    dest.y = v1.y - v2.y;
+    dest.z = v1.z - v2.z;
 }
 
 f32 VectorNormalize (Vector *dest, Vector *src) {
@@ -55,105 +36,95 @@ f32 VectorNormalize (Vector *dest, Vector *src) {
     return vecMag;
 }
 
-void VectorApproach(Vector *dest, Vector *src, f32 multiplier) {
-    dest->x = dest->x + (src->x - dest->x) * multiplier;
-    dest->y = dest->y + (src->y - dest->y) * multiplier;
-    dest->z = dest->z + (src->z - dest->z) * multiplier;
+void VectorApproach(Vector &dest, Vector &src, f32 multiplier) {
+    dest.x = dest.x + (src.x - dest.x) * multiplier;
+    dest.y = dest.y + (src.y - dest.y) * multiplier;
+    dest.z = dest.z + (src.z - dest.z) * multiplier;
 }
 
-void VectorAngleApproach(Vector *dest, Vector *src, f32 speed) {
+void VectorAngleApproach(Vector &dest, Vector &src, f32 speed) {
     Vector subResult;
     Vector approachResult;
 
-    VectorSubtract(&subResult, dest, src);
-    VectorApproach(&approachResult, &subResult, speed);
-    VectorSubtract(dest, dest, &approachResult);
+    VectorSubtract(subResult, dest, src);
+    VectorApproach(approachResult, subResult, speed);
+    VectorSubtract(dest, dest, approachResult);
 }
 
-void VectorCopy(Vector *dest, Vector *src) {
-    *dest = *src;
+void VectorExtend(Vector &dest, Vector &src, f32 dist, f32 pitch, f32 yaw) {
+    dest.x = src.x + dist * cosf(pitch) * sinf(yaw);
+    dest.y = src.y + dist * sinf(pitch);
+    dest.z = src.z + dist * cosf(pitch) * cosf(yaw);
 }
 
-void VectorExtend(Vector *dest, Vector *src, f32 dist, f32 pitch, f32 yaw) {
-    dest->x = src->x + dist * cosf(pitch) * sinf(yaw);
-    dest->y = src->y + dist * sinf(pitch);
-    dest->z = src->z + dist * cosf(pitch) * cosf(yaw);
+void Camera2639::approach(void) {
+    VectorApproach(this->spot, this->spotTarget, 0.2f);
+    VectorApproach(this->look, this->lookTarget, 0.2f);
+    VectorApproach(this->RPY, this->RPYTarget, 0.2f);
 }
 
-void CameraApproach(void) {
-    VectorApproach(&sCameraSpot, &sCameraSpot_Target, 0.2f);
-    VectorApproach(&sCameraLook, &sCameraLook_Target, 0.2f);
-    VectorApproach(&sCameraRPY, &sCameraRPY_Target, 0.2f);
-}
-
-void CameraApply_RPY(void) {
-    VectorExtend(&sCameraLook_Target, &sCameraSpot, 500.0f, sCameraRPY.pitch * (M_PI / 180.0f),
-        (M_PI / 180.0f) * (sCameraRPY.yaw)
-    );
-    CameraApproach();
-}
-
-void CameraPosApply(Vector *v, f32 dist, f32 yaw, f32 pitch) {
+void CameraPosApply(Vector &v, f32 dist, f32 yaw, f32 pitch) {
     VectorExtend(v, v, dist, 0,
         (M_PI / 180.0f) * yaw
     );
 }
 
-static void CameraUpdate_Free(void) {
+void Camera2639::updateFreeMove() {
     if (abs(ContReadHeld(0, x)) >= 14) {
         if (ContReadHeld(0, x) > 0) {
-            CameraPosApply(&sCameraSpot_Target, -MV_SPD, sCameraRPY.yaw + 90, sCameraRPY.pitch);
+            CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         } else {
-            CameraPosApply(&sCameraSpot_Target, MV_SPD, sCameraRPY.yaw + 90, sCameraRPY.pitch);
+            CameraPosApply(this->spotTarget, MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         }
     }
     if (abs(ContReadHeld(0, y)) >= 14) {
         if (ContReadHeld(0, y) > 0) {
-            CameraPosApply(&sCameraSpot_Target, MV_SPD, sCameraRPY.yaw, sCameraRPY.pitch);
+            CameraPosApply(this->spotTarget, MV_SPD, this->RPY.yaw, this->RPY.pitch);
         } else {
-            CameraPosApply(&sCameraSpot_Target, -MV_SPD, sCameraRPY.yaw, sCameraRPY.pitch);
+            CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw, this->RPY.pitch);
         }
     }
 
     // #define CAM_YAW (45)
     if (ContReadHeld(0, C_right)) {
-        sCameraRPY_Target.yaw -= 2;
+        this->RPYTarget.yaw -= 2;
     }
     if (ContReadHeld(0, C_left)) {
-        sCameraRPY_Target.yaw += 2;
+        this->RPYTarget.yaw += 2;
     }
     if (ContReadHeld(0, C_up)) {
-        sCameraRPY_Target.pitch -= 2;
+        this->RPYTarget.pitch -= 2;
     }
     if (ContReadHeld(0, C_down)) {
-        sCameraRPY_Target.pitch += 2;
+        this->RPYTarget.pitch += 2;
     }
 
     if (ContReadHeld(0, A)) {
-        sCameraSpot_Target.y += MV_SPD;
+        this->spotTarget.y += MV_SPD;
     }
     if (ContReadHeld(0, B)) {
-        sCameraSpot_Target.y -= MV_SPD;
+        this->spotTarget.y -= MV_SPD;
     }
 
-    clampA(sCameraRPY_Target.yaw);
-    clampAN(sCameraRPY_Target.yaw);
-    clampA(sCameraRPY_Target.pitch);
-    clampAN(sCameraRPY_Target.pitch);
+    clampA(this->RPYTarget.yaw);
+    clampAN(this->RPYTarget.yaw);
+    clampA(this->RPYTarget.pitch);
+    clampAN(this->RPYTarget.pitch);
 
-    clampA(sCameraRPY.yaw);
-    clampAN(sCameraRPY.yaw);
-    clampA(sCameraRPY.pitch);
-    clampAN(sCameraRPY.pitch);
+    clampA(this->RPY.yaw);
+    clampAN(this->RPY.yaw);
+    clampA(this->RPY.pitch);
+    clampAN(this->RPY.pitch);
 
-
-
-    CameraApply_RPY();
+    VectorExtend(this->lookTarget, this->spot, 500.0f, this->RPY.pitch * (M_PI / 180.0f),
+        (M_PI / 180.0f) * (this->RPY.yaw)
+    );
+    approach();
 }
 
-void CameraUpdate() {
+void Camera2639::update() {
 
-    CameraUpdate_Free();
+    this->updateFreeMove();
 
     // switch (gCameraMode) {
     //     case CAMERA_STATIC: CameraApply_RPY(); break;
@@ -164,8 +135,8 @@ void CameraUpdate() {
     //     case CAMERA_OBJECTMOVE: break;
     // }
     gluLookAt(
-        sCameraSpot.x, sCameraSpot.y, sCameraSpot.z,
-        sCameraLook.x, sCameraLook.y, sCameraLook.z,
+        this->spot.x, this->spot.y, this->spot.z,
+        this->look.x, this->look.y, this->look.z,
         0,1,0
     );
 

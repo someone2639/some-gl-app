@@ -27,6 +27,8 @@ static surface_t zbuffer;
 
 extern Object2639 Test_Obj;
 
+Camera2639 gCamera(0, 0, 0);
+
 void printDebug() {
     char buf[30];
     sprintf(buf, "%f %f %f",
@@ -163,8 +165,7 @@ void render() {
     // glLightfv(GL_LIGHT0, GL_DIFFUSE, difLight0);
 
 // CAMERA
-    void CameraUpdate();
-    CameraUpdate();
+    gCamera.update();
 
 // ACTION
     glRotatef(0, 0, 1, 0);
@@ -216,14 +217,10 @@ int main() {
     glEnable(GL_NORMALIZE);
     glDisable(GL_LIGHTING);
     glEnable(GL_MULTISAMPLE_ARB);
+    glDisable(GL_MATRIX_PALETTE_ARB);
 
 
     fnt1 = rdpq_font_load("rom:/Pacifico.font64");
-    // bool ret = _loader.LoadBinaryFromFile(&model, &err, &warn, "rom:/untitled.glb"); // for binary glTF(.glb)
-    // assert(warn.empty());
-    // assert(err.empty());
-    // assert(ret);
-
     // Object2639::RegisterModel("rom:/alphatest2.glb");
     // Object2639::RegisterModel("rom:/BOB_gltf_test.glb");
     // Object2639::RegisterModel("rom:/BOB_gltf.gltf");

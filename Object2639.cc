@@ -138,6 +138,33 @@ void Object2639::loadUVs(Model &model, Primitive &prim) {
     }
 }
 
+void Object2639::loadJoints(Model &model, Primitive &prim) {
+    if (prim.attributes.count("JOINTS_0") > 0) {
+        glEnableClientState(GL_MATRIX_INDEX_ARRAY_ARB);
+        glMatrixMode(GL_MATRIX_PALETTE_ARB);
+        const Accessor& jointAccessor = model.accessors[prim.attributes["JOINTS_0"]];
+        const BufferView& jointBufferView = model.bufferViews[jointAccessor.bufferView];
+        const Buffer &jointBuffer = model.buffers[jointBufferView.buffer];
+
+        u8 *joints = (u8 *)(&jointBuffer.data[
+            jointBufferView.byteOffset + jointAccessor.byteOffset
+        ]);
+
+        // assertf(jointAccessor.type == 1, "wtf its %d", jointAccessor.type);
+
+        glMatrixIndexPointerARB(
+            jointAccessor.type,
+            jointAccessor.componentType,
+            sizeof(u8) * jointAccessor.type,
+            joints
+        );
+        glMatrixMode(GL_MODELVIEW);
+    } else {
+        glDisableClientState(GL_MATRIX_INDEX_ARRAY_ARB);
+        // assertf(0, "No joints?? %d", prim.attributes.count("JOINTS_0"));
+    }
+}
+
 void Object2639::drawTris(Model &model, Primitive &prim) {
     const Accessor &indexAccessor = model.accessors[prim.indices];
     const BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
@@ -390,6 +417,8 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
                 loadNormals(model, prim);
                 loadColors(model, prim);
                 loadUVs(model, prim);
+                // TODO: do after blended skinning gets implemented
+                // loadJoints(model, prim);
 
     // Texture properties
                 PbrMetallicRoughness p = m->pbrMetallicRoughness;

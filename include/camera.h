@@ -33,4 +33,22 @@ extern void CameraUpdate();
 
 #ifdef __cplusplus
 };
+
+class Camera2639 {
+    private:
+        Vector look;
+        Vector lookTarget;
+        Vector spot;
+        Vector spotTarget;
+        Vector RPY;
+        Vector RPYTarget;
+
+        void updateFreeMove();
+
+        void approach();
+    public:
+        Camera2639(f32 x, f32 y, f32 z) : look(x, y, z), lookTarget(x, y, z) {};
+        void update();
+};
+
 #endif

@@ -36,6 +36,7 @@ class Object2639 {
         void loadNormals(Model &model, Primitive &prim);
         void loadColors(Model &model, Primitive &prim);
         void loadUVs(Model &model, Primitive &prim);
+        void loadJoints(Model &model, Primitive &prim);
         void drawTris(Model &model, Primitive &prim);
 
     public:
