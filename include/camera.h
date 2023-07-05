@@ -6,14 +6,6 @@
 
 #include "Vector.h"
 
-extern Vector sCameraLook;
-extern Vector sCameraSpot;
-extern Vector sCameraRPY;
-
-extern Vector sCameraLook_Target;
-extern Vector sCameraSpot_Target;
-extern Vector sCameraRPY_Target;
-
 enum CameraModes {
     CAMERA_STATIC = 0,
     CAMERA_FREEMOVE,
@@ -33,12 +25,21 @@ class Camera2639 {
         Vector RPY;
         Vector RPYTarget;
 
-        void updateFreeMove();
+        u32 projection;
+        f32 near;
+        f32 far;
 
+        // if perspective:
+        f32 aspect;
+        // if ortho:
+        f32 xmag;
+        f32 ymag;
+
+        void updateFreeMove();
         void approach();
     public:
         Camera2639();
         Camera2639(tinygltf::Camera &c);
-        Camera2639(f32 x, f32 y, f32 z) : look(x, y, z), lookTarget(x, y, z) {};
+        Camera2639(f32 x, f32 y, f32 z) : spot(x, y, z), spotTarget(x, y, z) {};
         void update();
 };

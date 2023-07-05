@@ -15,7 +15,7 @@ N64_CFLAGS += -Wno-missing-braces
 N64_CFLAGS += -Wno-int-conversion
 
 
-CXXFLAGS += $(WARNINGS) $(INCLUDES) $(DEFINES)
+CXXFLAGS += $(WARNINGS) $(INCLUDES) $(DEFINES) --std=c++23
 
 
 c_src = $(wildcard *.c)
@@ -29,13 +29,15 @@ assets_ttf = $(wildcard assets/*.ttf)
 assets_glb = $(wildcard assets/*.glb)
 assets_gltf = $(wildcard assets/*.gltf)
 assets_collision = $(wildcard assets/*.collision)
+assets_sound = $(wildcard assets/*.wav)
 
 assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite))) \
 			  $(addprefix filesystem/,$(notdir $(assets_ttf:%.ttf=%.font64))) \
 			  $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.glb))) \
 			  $(addprefix filesystem/,$(notdir $(assets_gltf:%.gltf=%.gltf))) \
 			  $(addprefix filesystem/,$(notdir $(assets_bin:%.bin=%.bin))) \
-			  $(addprefix filesystem/,$(notdir $(assets_collision:%.collision=%.collision)))
+			  $(addprefix filesystem/,$(notdir $(assets_collision:%.collision=%.collision))) \
+			  $(addprefix filesystem/,$(notdir $(assets_sound:%.wav=%.wav64)))
 
 MKSPRITE_FLAGS ?=
 
@@ -51,6 +53,8 @@ test: $(ROM_NAME).z64
 	ares $<
 test2: $(ROM_NAME).z64
 	simple64-gui $<
+load: $(ROM_NAME).z64
+	cp $< /run/media/$(USER)/CF62-9261/
 
 filesystem/%.font64: assets/%.ttf
 	@mkdir -p $(dir $@)
@@ -83,6 +87,11 @@ filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
 	@echo "    [SPRITE] $@"
 	@$(N64_MKSPRITE) -f RGBA16 --compress -o "$(dir $@)" "$<"
+
+filesystem/%.wav64: assets/%.wav
+	@mkdir -p $(dir $@)
+	@echo "    [AUDIO] $@"
+	@$(N64_AUDIOCONV) -o filesystem $<
 
 $(BUILD_DIR)/$(ROM_NAME).dfs: $(assets_conv)
 $(BUILD_DIR)/$(ROM_NAME).elf: $(O_FILES)

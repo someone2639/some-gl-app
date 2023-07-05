@@ -25,27 +25,23 @@ struct controller_data __attribute__((aligned(8))) gHeldButtons;
 
 static surface_t zbuffer;
 
-void printDebug() {
-    
-}
+float gFPS;
+void calculate_framerate(void) {
+    static unsigned int curFrameTimeIndex = 0;
+    static unsigned int frameTimes[30];
+    unsigned int newTime = timer_ticks();
+    unsigned int  oldTime = frameTimes[curFrameTimeIndex];
+    frameTimes[curFrameTimeIndex] = newTime;
 
-void printTimers() {
-    int k = 0;
-
-    for (Timer &tm : timerPool) {
-        char buf[50];
-        rdpq_font_position(100, 110 + k);
-
-        sprintf(buf, "%s: %.3f ms", tm.name.c_str(), tm.elapsed_ms);
-        rdpq_font_print(fnt1, buf);
-
-        k += 10;
+    curFrameTimeIndex++;
+    if (curFrameTimeIndex >= 30) {
+        curFrameTimeIndex = 0;
     }
+    gFPS = (30 * 1000000.0f) / TIMER_MICROS(newTime - oldTime) / 2.0f;
 }
-
 
 void render(Level2639 &level) {
-    static const GLubyte bgColor[] = {0, 255, 229, 255};
+    static const GLubyte bgColor[] = {0, 255, 229};
     // static const GLubyte bgColor[] = {0, 0, 0, 255};
 
     gl_context_begin();
@@ -54,7 +50,7 @@ void render(Level2639 &level) {
         bgColor[0] / 255.0f,
         bgColor[1] / 255.0f,
         bgColor[2] / 255.0f,
-        bgColor[3] / 255.0f
+        1.0f
     );
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -127,6 +123,11 @@ int main() {
     display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, ANTIALIAS_RESAMPLE_FETCH_ALWAYS);
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
 
+    audio_init(24000, 4);
+    mixer_init(2);  // Initialize up to 16 channels
+    mixer_ch_set_limits(0, 0, 32000, 0);
+    timer_init();
+
     gl_init();
 
     controller_init();
@@ -151,36 +152,62 @@ int main() {
     Timer displayTimer = Timer::RegisterTimer("Display");
         // renderTimer.start();
 
+    wav64_t bgm;
+    wav64_open(&bgm, "rom:/cutloop3_24k.wav64");
+    wav64_set_loop(&bgm, true);
+    wav64_play(&bgm, 0);
+
+    u32 beats = 0;
+
+
+
     while (1) {
-        controller_scan();
-        gPressedButtons = get_keys_pressed();
-        gHeldButtons = get_keys_down();
 
-        displayTimer.start();
+        // displayTimer.start();
+        calculate_framerate();
 
-        surface_t *disp = display_get();
-        rdpq_attach(disp, &zbuffer);
+        if (beats & 1) {
+            // only do this at 30fps
+            // TODO: move to game tick
+            controller_scan();
+            gPressedButtons = get_keys_pressed();
+            gHeldButtons = get_keys_down();
+
+            surface_t *disp = display_get();
+            rdpq_attach(disp, &zbuffer);
+            render(level);
+
+            rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
+            rdpq_font_position(20, 50);
+            static char buf[50];
+            sprintf(buf, "FPS: %2.2f", gFPS);
+            rdpq_font_print(fnt1, buf);
+            rdpq_font_end();
+
+            rdpq_detach_show();
+        }
+        else {
+            if (audio_can_write()) {        
+                short *buf = audio_write_begin();
+                mixer_poll(buf, audio_get_buffer_length());
+                audio_write_end();
+            }
+        }
 
 
         // rdpq_debug_log(true);
         // __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
-        render(level);
         // rdpq_debug_log(false);
 
         // rdpq_debug_stop();
 
-        renderTimer.end();
-
-        // rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
-        // printDebug();
-        // printTimers();
-        // rdpq_font_end();
+        // renderTimer.end();
 
 
-        rdpq_detach_show();
 
-        displayTimer.end();
 
-        // break;
+
+        beats ^= 1;
+        // displayTimer.end();
     }
 }

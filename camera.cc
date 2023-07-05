@@ -69,12 +69,12 @@ void Camera2639::updateFreeMove() {
         if (ContReadHeld(0, x) > 0) {
             CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         } else {
-            CameraPosApply(this->spotTarget, MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
+            CameraPosApply(this->spotTarget,  MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         }
     }
     if (abs(ContReadHeld(0, y)) >= 14) {
         if (ContReadHeld(0, y) > 0) {
-            CameraPosApply(this->spotTarget, MV_SPD, this->RPY.yaw, this->RPY.pitch);
+            CameraPosApply(this->spotTarget,  MV_SPD, this->RPY.yaw, this->RPY.pitch);
         } else {
             CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw, this->RPY.pitch);
         }
@@ -145,7 +145,7 @@ void Camera2639::update() {
 }
 
 Camera2639::Camera2639(tinygltf::Camera &c) {
-
+    
 }
 Camera2639::Camera2639() {
 

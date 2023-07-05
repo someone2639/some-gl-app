@@ -389,6 +389,9 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
 
         {
             Mesh mes = model.meshes[HeadNode.mesh];
+
+            this->name = mes.name;
+
             for (Primitive &prim : mes.primitives) {
                 std::string texPath = "rom:/";
 

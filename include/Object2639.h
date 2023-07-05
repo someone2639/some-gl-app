@@ -40,10 +40,13 @@ class Object2639 {
         void drawTris(Model &model, Primitive &prim);
 
     public:
+        std::string name;
+
         // serviceable params
         Vector move;
         Vector rotate;
         Vector scale;
+
         void (*init)(struct Object2639 *o);
         void (*loop)(struct Object2639 *o);
         char *texturePath;
