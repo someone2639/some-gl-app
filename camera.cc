@@ -1,11 +1,14 @@
 #include <libdragon.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <math.h>
 
 #include "2639_defs.h"
 #include "camera.h"
 #include "Vector.h"
 
+#define M_PI 3.1415926535897932384626433832795
+#define M_PIF 3.1415926535897932384626433832795f
 
 #define MV_SPD 0.6f
 #define ROT_SPD (MV_SPD* 6)

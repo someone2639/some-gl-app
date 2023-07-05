@@ -267,7 +267,7 @@ Object2639::Object2639() {
     this->loop = nullptr;
 }
 
-Object2639::Object2639(Model &model, Scene &s) : Object2639() {
+Object2639::Object2639(std::string directory, Model &model, Scene &s) : Object2639() {
     GLuint aa = glGenLists(1);
     this->_displaylist = aa;
 
@@ -297,7 +297,7 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
                 continue;
             }
 
-            std::string texPath = "rom:/";
+            std::string texPath = directory;
 
 
             int startIdx = im->uri.find(".");
@@ -393,7 +393,7 @@ Object2639::Object2639(Model &model, Scene &s) : Object2639() {
             this->name = mes.name;
 
             for (Primitive &prim : mes.primitives) {
-                std::string texPath = "rom:/";
+                std::string texPath = directory;
 
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
                 glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);

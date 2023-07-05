@@ -63,7 +63,7 @@ class Object2639 {
             u32 segmentCount,
             gtGfx *modelList
         );
-        Object2639(Model &m, Scene &s);
+        Object2639(std::string directory, Model &m, Scene &s);
         // Object2639(std::string glb, std::string image);
 
         // void processGLTF(std::vector<Mesh> meshes);

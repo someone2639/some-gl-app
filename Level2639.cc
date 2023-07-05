@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include <tiny_gltf.h>
 using namespace tinygltf;
@@ -23,6 +24,11 @@ Level2639::Level2639(std::string gltf) {
     std::string err, warn;
     Model model;
 
+    std::filesystem::path location(gltf);
+
+    this->directory = location.parent_path();
+    this->directory += "/";
+
     // we do texturing locally, and also
     // tinygltf does not explain this function prototype at all,
     // so we will not trust it with image loading.
@@ -42,7 +48,7 @@ Level2639::Level2639(std::string gltf) {
 
 // make an object per scene
     for (Scene &s : model.scenes) {
-        this->objects.emplace_back(Object2639(model, s));
+        this->objects.emplace_back(Object2639(this->directory, model, s));
     }
 }
 

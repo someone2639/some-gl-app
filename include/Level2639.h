@@ -14,12 +14,14 @@ using namespace tinygltf;
 
 class Level2639 {
     private:
+        std::string directory;
+
         TinyGLTF _loader;
         wav64_t bgm;
 
     public:
 
-        GLubyte bg[3];
+        GLubyte bgcolor[3];
 
         Level2639(std::string gltf);
         // todo: Collision map

@@ -140,12 +140,12 @@ int main() {
     glDisable(GL_MATRIX_PALETTE_ARB);
 
 
-    fnt1 = rdpq_font_load("rom:/Pacifico.font64");
+    fnt1 = rdpq_font_load("rom:/fonts/Pacifico.font64");
     // Level2639 level("rom:/alphatest2.glb");
     // Level2639 level("rom:/BOB_gltf_test.glb");
     // Level2639 level("rom:/cube.gltf");
     // Level2639 level("rom:/human_high.gltf");
-    Level2639 level("rom:/BOB_gltf.gltf");
+    Level2639 level("rom:/levels/testBOB/BOB_gltf.gltf");
     // Level2639 level("rom:/human_low.gltf");
 
     Timer renderTimer = Timer::RegisterTimer("Render a Cube");
@@ -153,13 +153,11 @@ int main() {
         // renderTimer.start();
 
     wav64_t bgm;
-    wav64_open(&bgm, "rom:/cutloop3_24k.wav64");
+    wav64_open(&bgm, "rom:/music/cutloop3_24k.wav64");
     wav64_set_loop(&bgm, true);
     wav64_play(&bgm, 0);
 
     u32 beats = 0;
-
-
 
     while (1) {
 
