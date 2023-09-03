@@ -112,6 +112,10 @@ void render(Level2639 &level) {
     gl_context_end();
 }
 
+bool is_project_64() {
+    return *((volatile u64*)0xb4000008u) == 0x00080008000C000Cull;
+}
+
 int main() {
     std::string err;
     std::string warn;
@@ -139,23 +143,9 @@ int main() {
     glEnable(GL_MULTISAMPLE_ARB);
     glDisable(GL_MATRIX_PALETTE_ARB);
 
-
     fnt1 = rdpq_font_load("rom:/fonts/Pacifico.font64");
-    // Level2639 level("rom:/alphatest2.glb");
-    // Level2639 level("rom:/BOB_gltf_test.glb");
-    // Level2639 level("rom:/cube.gltf");
-    // Level2639 level("rom:/human_high.gltf");
-    Level2639 level("rom:/levels/testBOB/BOB_gltf.gltf");
-    // Level2639 level("rom:/human_low.gltf");
 
-    Timer renderTimer = Timer::RegisterTimer("Render a Cube");
-    Timer displayTimer = Timer::RegisterTimer("Display");
-        // renderTimer.start();
-
-    wav64_t bgm;
-    wav64_open(&bgm, "rom:/music/cutloop3_24k.wav64");
-    wav64_set_loop(&bgm, true);
-    wav64_play(&bgm, 0);
+    Level2639 level("rom:/levels/title/");
 
     u32 beats = 0;
 
@@ -166,7 +156,7 @@ int main() {
 
         if (beats & 1) {
             // only do this at 30fps
-            // TODO: move to game tick
+            // TODO: move to a game tick
             controller_scan();
             gPressedButtons = get_keys_pressed();
             gHeldButtons = get_keys_down();
@@ -174,13 +164,6 @@ int main() {
             surface_t *disp = display_get();
             rdpq_attach(disp, &zbuffer);
             render(level);
-
-            rdpq_font_begin(RGBA32(0xED, 0xAE, 0x49, 0xFF));
-            rdpq_font_position(20, 50);
-            static char buf[50];
-            sprintf(buf, "FPS: %2.2f", gFPS);
-            rdpq_font_print(fnt1, buf);
-            rdpq_font_end();
 
             rdpq_detach_show();
         }
@@ -193,19 +176,6 @@ int main() {
         }
 
 
-        // rdpq_debug_log(true);
-        // __rdpq_debug_log_flags = RDPQ_LOG_FLAG_SHOWTRIS;
-        // rdpq_debug_log(false);
-
-        // rdpq_debug_stop();
-
-        // renderTimer.end();
-
-
-
-
-
         beats ^= 1;
-        // displayTimer.end();
     }
 }

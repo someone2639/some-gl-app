@@ -15,6 +15,7 @@ using namespace tinygltf;
 class Level2639 {
     private:
         std::string directory;
+        void *dll;
 
         TinyGLTF _loader;
         wav64_t bgm;
@@ -27,7 +28,8 @@ class Level2639 {
         // todo: Collision map
         // todo: std::vector<Light2639> lights;
         Camera2639 cam;
-        std::vector<Object2639> objects;
+        std::vector<Object2639> geometryObjects;
+        std::vector<Object2639> entityObjects;
 
         void update();
 };

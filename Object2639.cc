@@ -147,8 +147,6 @@ void Object2639::loadJoints(Model &model, Primitive &prim) {
             jointBufferView.byteOffset + jointAccessor.byteOffset
         ]);
 
-        // assertf(jointAccessor.type == 1, "wtf its %d", jointAccessor.type);
-
         glMatrixIndexPointerARB(
             jointAccessor.type,
             jointAccessor.componentType,
@@ -158,7 +156,6 @@ void Object2639::loadJoints(Model &model, Primitive &prim) {
         glMatrixMode(GL_MODELVIEW);
     } else {
         glDisableClientState(GL_MATRIX_INDEX_ARRAY_ARB);
-        // assertf(0, "No joints?? %d", prim.attributes.count("JOINTS_0"));
     }
 }
 
@@ -199,7 +196,6 @@ void Object2639::initializeInternalParams() {
     this->_initialized = 0;
     this->_displaylist = 0x2639;
     this->_texIndex = 0;
-    // this->_texture[0] = 0;
     this->texturePath = nullptr;
     this->_sprite = nullptr;
 
@@ -234,7 +230,6 @@ void Object2639::render() {
 
     glScalef(this->scale.x, this->scale.y, this->scale.z);
 
-    // assert((glIsList(this->_displaylist) == GL_TRUE));
     glEnable(GL_TEXTURE_2D);
     glCallList(this->_displaylist);
 
@@ -335,7 +330,6 @@ Object2639::Object2639(std::string directory, Model &model, Scene &s) : Object26
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             }
 
-            // surface_t surf = sprite_get_lod_pixels(materialSprite, 0);
             glSpriteTextureN64(GL_TEXTURE_2D, materialSprite, &this->_texParams[this->_texIndex]);
 
 
@@ -352,40 +346,10 @@ Object2639::Object2639(std::string directory, Model &model, Scene &s) : Object26
         for (int i : s.nodes) {
             if (model.nodes[i].skin != -1) {
                 HeadNode = model.nodes[i];
-                // HeadNode.mesh = -1;
             } else if (model.nodes[i].mesh != -1) {
                 HeadNode = model.nodes[i];
             }
         }
-
-            // if (n.mesh == -1) continue; // nothing to draw! (Camera, animation, etc.)
-
-            // if (n.translation.size() > 0) {
-            //     if (
-            //         (n.translation[0] == 0)
-            //      && (n.translation[1] == 0)
-            //      && (n.translation[2] == 0)
-            //     ) {
-            //     } else {
-            //         glTranslatef(
-            //             n.translation[0],
-            //             n.translation[1],
-            //             n.translation[2]
-            //         );
-            //     }
-            // }
-
-            // // glRotatef(this->rotate.x, 1, 0, 0);
-            // // glRotatef(this->rotate.y, 0, 1, 0);
-            // // glRotatef(this->rotate.z, 0, 0, 1);
-
-            // if (n.scale.size() > 0) {
-            //     glScalef(
-            //         n.scale[0],
-            //         n.scale[1],
-            //         n.scale[2]
-            //     );
-            // }
 
         {
             Mesh mes = model.meshes[HeadNode.mesh];
