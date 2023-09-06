@@ -3,6 +3,7 @@
 
 
 #include "Vector.h"
+#include "Quat.h"
 
 Vector::Vector() {
     this->x = 0;
@@ -34,4 +35,8 @@ void Vector::operator =(std::initializer_list<float> that) {
     this->z = vec[2];
 }
 
-
+Vector::Vector(Quat& q) {
+    this->x = 2.0f * (q.b * q.d - q.a * q.c);
+    this->y = 2.0f * (q.c * q.d + q.a * q.b);
+    this->z = q.a * q.a - q.b * q.b - q.c * q.c + q.d * q.d;
+}

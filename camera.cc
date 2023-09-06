@@ -121,17 +121,14 @@ void Camera2639::updateFreeMove() {
 }
 
 void Camera2639::update() {
+    switch (this->mode) {
+        case CAMERA_STATIC: break;
+        case CAMERA_FREEMOVE: this->updateFreeMove(); break;
+        case CAMERA_CUTSCENE: break;
 
-    this->updateFreeMove();
-
-    // switch (this->mode) {
-    //     case CAMERA_STATIC: break;
-    //     case CAMERA_FREEMOVE: this->updateFreeMove(); break;
-    //     case CAMERA_CUTSCENE: break;
-
-    //     // something else is setting the lookat matrix so we dont care
-    //     case CAMERA_OBJECTMOVE: break;
-    // }
+        // something else is setting the lookat matrix so we dont care
+        case CAMERA_OBJECTMOVE: break;
+    }
     gluLookAt(
         this->spot.x, this->spot.y, this->spot.z,
         this->look.x, this->look.y, this->look.z,
@@ -147,9 +144,20 @@ void Camera2639::update() {
     gluPerspective(45.0, aspect_ratio, near_plane, far_plane);
 }
 
-Camera2639::Camera2639(tinygltf::Camera &c) {
-    
-}
-Camera2639::Camera2639() {
+Camera2639::Camera2639(tinygltf::Node &node, tinygltf::Camera &cam) : Camera2639() {
+    // Node contains pos/rotation, Camera contains Perspective/Ortho data
+    if (node.translation.size() == 3) {
+        this->spot.x = this->spotTarget.x = node.translation[0];
+        this->spot.y = this->spotTarget.y = node.translation[1];
+        this->spot.z = this->spotTarget.z = node.translation[2];
+    }
 
+    if (node.rotation.size() == 4) {
+        Quat q(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+
+        this->RPY = Vector(q);
+        this->RPYTarget = Vector(q);
+    }
+
+    this->mode = CAMERA_STATIC;
 }

@@ -18,10 +18,10 @@ class Camera2639 {
     private:
         u32 mode;
 
-        Vector look;
-        Vector lookTarget;
         Vector spot;
         Vector spotTarget;
+        Vector look;
+        Vector lookTarget;
         Vector RPY;
         Vector RPYTarget;
 
@@ -38,8 +38,13 @@ class Camera2639 {
         void updateFreeMove();
         void approach();
     public:
-        Camera2639();
-        Camera2639(tinygltf::Camera &c);
-        Camera2639(f32 x, f32 y, f32 z) : spot(x, y, z), spotTarget(x, y, z) {};
+        Camera2639() : spot(0, 0, 0),
+                       spotTarget(0, 0, 0),
+                       RPY(0, 0, 0),
+                       RPYTarget(0, 0, 0) {this->mode = CAMERA_FREEMOVE};
+        Camera2639(tinygltf::Node &node, tinygltf::Camera &cam);
+        Camera2639(f32 x, f32 y, f32 z) : spot(x, y, z), spotTarget(x, y, z) {
+            this->mode = CAMERA_FREEMOVE
+        };
         void update();
 };

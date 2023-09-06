@@ -63,7 +63,12 @@ Level2639::Level2639(std::string path) {
 
 // make camera
     if (model.cameras.size() > 0) {
-        this->cam = Camera2639(model.cameras[0]);
+        Camera c;
+        for (Node &n : model.nodes) {
+            if (n.camera != -1) {
+                this->cam = Camera2639(n, model.cameras[n.camera]);
+            }
+        }
     } else {
         this->cam = Camera2639(0, 0, 0);
     }

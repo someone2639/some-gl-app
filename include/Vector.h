@@ -3,6 +3,7 @@
 #include <libdragon.h>
 #include <initializer_list>
 #include "types.h"
+#include "Quat.h"
 
 class Vector {
     public:
@@ -12,7 +13,9 @@ class Vector {
 
         Vector();
         Vector(f32, f32, f32);
+        Vector(Quat &q);
 
         f32 operator [](int);
         void operator =(std::initializer_list<float> that);
 };
+
