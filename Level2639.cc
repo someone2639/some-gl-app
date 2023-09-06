@@ -78,6 +78,6 @@ void Level2639::update() {
     this->cam.update();
 
     for (Object2639 &i : this->geometryObjects) {
-        i.update();
+        i.render();
     }
 }

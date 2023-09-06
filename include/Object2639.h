@@ -69,5 +69,5 @@ class Object2639 {
         // void processGLTF(std::vector<Mesh> meshes);
 
         void render();
-        void update();
+        virtual void update();
 };

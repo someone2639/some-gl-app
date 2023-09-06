@@ -30,7 +30,6 @@ class Level2639 {
         Camera2639 cam;
         std::vector<Object2639> geometryObjects;
         std::vector<Object2639> entityObjects;
-
         void update();
 };
 

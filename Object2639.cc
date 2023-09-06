@@ -425,13 +425,10 @@ void Object2639::update() {
             this->init(this);
         }
         this->_initialized = 1;
-        assert((glIsList(this->_displaylist) == GL_TRUE));
         return;
     }
 
     if (this->loop != nullptr) {
         this->loop(this);
     }
-    assert((glIsList(this->_displaylist) == GL_TRUE));
-    this->render();
 }
