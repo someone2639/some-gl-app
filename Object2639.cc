@@ -248,11 +248,7 @@ Object2639::Object2639(std::initializer_list<float> m, std::initializer_list<flo
     this->modelList = modelList;
 }
 
-Object2639::Object2639() {
-    this->move = {0, 0, 0};
-    this->rotate = {0, 0, 0};
-    this->scale = {10, 10, 10};
-
+Object2639::Object2639() : move(0, 0, 0), rotate(0, 0, 0), scale(1, 1, 1) {
     this->segmentCount = 0;
     this->modelList = 0;
 
@@ -274,6 +270,7 @@ Object2639::Object2639(std::string directory, Model &model, Scene &s) : Object26
 
         for (Primitive &prim : mes.primitives) {
 // TEXTURES
+            // TODO: crash if no texture material
             int matIndex = prim.material;
             struct tinygltf::Material *m = &model.materials[matIndex];
 

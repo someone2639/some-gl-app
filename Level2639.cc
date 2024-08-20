@@ -30,7 +30,7 @@ Level2639::Level2639(std::string path) {
 
     std::string gltf;
     std::fstream lvl;
-    lvl.open(path + std::string("title.lvl"));
+    lvl.open(path + std::string("testBOB.lvl"));
 
     std::string music("rom:/music/");
 
@@ -44,12 +44,12 @@ Level2639::Level2639(std::string path) {
             lvl >> token;
             music += token;
             music += std::string("64");
+            // wav64_open(&this->bgm, music.c_str());
+            // wav64_set_loop(&this->bgm, true);
+            // wav64_play(&this->bgm, 0);
         }
     }
 
-    wav64_open(&this->bgm, music.c_str());
-    wav64_set_loop(&this->bgm, true);
-    wav64_play(&this->bgm, 0);
 
     // we do texturing locally, and also
     // tinygltf does not explain this function prototype at all,
@@ -62,16 +62,17 @@ Level2639::Level2639(std::string path) {
     assert(ret);
 
 // make camera
-    if (model.cameras.size() > 0) {
-        Camera c;
-        for (Node &n : model.nodes) {
-            if (n.camera != -1) {
-                this->cam = Camera2639(n, model.cameras[n.camera]);
-            }
-        }
-    } else {
-        this->cam = Camera2639(0, 0, 0);
-    }
+    this->cam = Camera2639();
+    // if (model.cameras.size() > 0) {
+    //     Camera c;
+    //     for (Node &n : model.nodes) {
+    //         if (n.camera != -1) {
+    //             this->cam = Camera2639(n, model.cameras[n.camera]);
+    //         }
+    //     }
+    // } else {
+    //     this->cam = Camera2639(0, 0, 0);
+    // }
 
 // make an object per scene
     for (Scene &s : model.scenes) {
@@ -85,4 +86,9 @@ void Level2639::update() {
     for (Object2639 &i : this->geometryObjects) {
         i.render();
     }
+}
+
+void Level2639::ChangeLevel(Level2639 **l, std::string path) {
+    delete *l;
+    *l = new Level2639(path);
 }

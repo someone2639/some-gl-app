@@ -116,6 +116,8 @@ bool is_project_64() {
     return *((volatile u64*)0xb4000008u) == 0x00080008000C000Cull;
 }
 
+// Level2639 *level;
+
 int main() {
     std::string err;
     std::string warn;
@@ -127,9 +129,9 @@ int main() {
     display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, ANTIALIAS_RESAMPLE_FETCH_ALWAYS);
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
 
-    audio_init(24000, 4);
-    mixer_init(2);  // Initialize up to 16 channels
-    mixer_ch_set_limits(0, 0, 32000, 0);
+    // audio_init(24000, 4);
+    // mixer_init(2);  // Initialize up to 16 channels
+    // mixer_ch_set_limits(0, 0, 32000, 0);
     timer_init();
 
     gl_init();
@@ -143,18 +145,29 @@ int main() {
     glEnable(GL_MULTISAMPLE_ARB);
     glDisable(GL_MATRIX_PALETTE_ARB);
 
-    fnt1 = rdpq_font_load("rom:/fonts/Pacifico.font64");
+    // fnt1 = rdpq_font_load("rom:/fonts/Pacifico.font64");
+    // rdpq_text_register_font(1, fnt1);
 
-    Level2639 level("rom:/levels/title/");
+    Level2639 level("rom:/levels/testBOB/");
 
     u32 beats = 0;
+
+    int box_width = 320;
+    int box_height = 240;
+    rdpq_textparms_t myParms;
+        myParms.line_spacing = 1;
+        myParms.align = ALIGN_LEFT;
+        myParms.valign = VALIGN_CENTER;
+        myParms.width = box_width;
+        myParms.height = box_height;
+        myParms.wrap = WRAP_WORD;
 
     while (1) {
 
         // displayTimer.start();
         calculate_framerate();
 
-        if (beats & 1) {
+        // if (beats & 1) {
             // only do this at 30fps
             // TODO: move to a game tick
             controller_scan();
@@ -165,15 +178,20 @@ int main() {
             rdpq_attach(disp, &zbuffer);
             render(level);
 
+            char text[50];
+            sprintf(text, "FPS: %f\n", gFPS);
+            debugf(text);
+            // int nbytes = rdpq_text_print(&myParms, 1, (320-box_width)/2, (240-box_height)/2, text);
+
             rdpq_detach_show();
-        }
-        else {
-            if (audio_can_write()) {        
-                short *buf = audio_write_begin();
-                mixer_poll(buf, audio_get_buffer_length());
-                audio_write_end();
-            }
-        }
+        // }
+        // else {
+            // if (audio_can_write()) {        
+            //     short *buf = audio_write_begin();
+            //     mixer_poll(buf, audio_get_buffer_length());
+            //     audio_write_end();
+            // }
+        // }
 
 
         beats ^= 1;

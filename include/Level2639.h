@@ -31,5 +31,7 @@ class Level2639 {
         std::vector<Object2639> geometryObjects;
         std::vector<Object2639> entityObjects;
         void update();
+
+        static void ChangeLevel(Level2639 **l, std::string path);
 };
 

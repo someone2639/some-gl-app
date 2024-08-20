@@ -7,9 +7,6 @@
 #include "camera.h"
 #include "Vector.h"
 
-#define M_PI 3.1415926535897932384626433832795
-#define M_PIF 3.1415926535897932384626433832795f
-
 #define MV_SPD 0.6f
 #define ROT_SPD (MV_SPD* 6)
 #define ANG_CLMP 180.0f
@@ -117,7 +114,6 @@ void Camera2639::updateFreeMove() {
     VectorExtend(this->lookTarget, this->spot, 500.0f, this->RPY.pitch * (M_PI / 180.0f),
         (M_PI / 180.0f) * (this->RPY.yaw)
     );
-    approach();
 }
 
 void Camera2639::update() {
@@ -129,19 +125,32 @@ void Camera2639::update() {
         // something else is setting the lookat matrix so we dont care
         case CAMERA_OBJECTMOVE: break;
     }
+
+    approach();
+
     gluLookAt(
         this->spot.x, this->spot.y, this->spot.z,
         this->look.x, this->look.y, this->look.z,
         0,1,0
     );
 
+    if (ContReadHeld(0, A)) {
+        this->spotTarget.z += MV_SPD;
+    }
+    if (ContReadHeld(0, B)) {
+        this->spotTarget.z -= MV_SPD;
+    }
+
+    // debugf("CAM POS: %f %f %f\n", this->spot.x, this->spot.y, this->spot.z);
+    // debugf("CAM LOOK: %f %f %f\n", this->look.x, this->look.y, this->look.z);
+    // debugf("CAM ROT: %f %f %f\n", this->RPY.x, this->RPY.y, this->RPY.z);
+    // debugf("\n");
+
 // TODO: modulate this with gltf camera somehow
-    float aspect_ratio = (float)display_get_width() / (float)display_get_height();
-    float near_plane = 5.0f;
-    float far_plane = 300.0f;
+    // float aspect_ratio = (float)display_get_width() / (float)display_get_height();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0, aspect_ratio, near_plane, far_plane);
+    gluPerspective(this->fovy, this->aspectRatio, this->znear, this->zfar);
 }
 
 Camera2639::Camera2639(tinygltf::Node &node, tinygltf::Camera &cam) : Camera2639() {
@@ -152,12 +161,31 @@ Camera2639::Camera2639(tinygltf::Node &node, tinygltf::Camera &cam) : Camera2639
         this->spot.z = this->spotTarget.z = node.translation[2];
     }
 
+    // this->projection = cam.projection;
+
+    if (cam.type == "perspective") {
+        this->aspectRatio = cam.perspective.aspectRatio;
+        this->znear = cam.perspective.znear;
+        this->zfar = cam.perspective.zfar;
+        this->fovy = cam.perspective.yfov * 180 / M_PI;
+    }
+    else if (cam.type == "orthographic") {
+        this->xmag = cam.orthographic.xmag;
+        this->ymag = cam.orthographic.ymag;
+        this->znear = cam.orthographic.znear;
+        this->zfar = cam.orthographic.zfar;
+    }
+
     if (node.rotation.size() == 4) {
         Quat q(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
 
         this->RPY = Vector(q);
         this->RPYTarget = Vector(q);
     }
+
+
+
+    // this->fovy = 114;
 
     this->mode = CAMERA_STATIC;
 }

@@ -64,7 +64,9 @@ void NewText_CopyRest(char *text) {
 
 
 void clearrow(char *text) {
-    for (int i = 0; i < NT_StrLen(text); i++) {
+    u32 len = NT_StrLen(text);
+
+    for (u32 i = 0; i < len; i++) {
         if (text[i] == CH_COLORSTACK_UD) text[i] = ' ';
     }
 }
@@ -78,7 +80,9 @@ void flipcase(char **texts) {
     static s32 isUpper = 1;
 
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < NT_StrLen(texts[i]); j++) {
+        u32 len = NT_StrLen(texts[i]);
+
+        for (u32 j = 0; j < len; j++) {
             if ((texts[i][j] >= ('A')
               && texts[i][j] <= ('Z'))
                 ||
@@ -375,7 +379,9 @@ void NT_RenderMenu(u8 *cursor) {
 
 
 static void str_tolower(char *dst, char *str) {
-    for (int i = 0; i < strlen(str); i++) {
+    u32 len = strlen(str);
+
+    for (u32 i = 0; i < len; i++) {
         if (str[i] >= 'A' && str[i] <= 'Z') {
             dst[i] = str[i] + 32;
         } else {

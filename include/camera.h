@@ -26,11 +26,12 @@ class Camera2639 {
         Vector RPYTarget;
 
         u32 projection;
-        f32 near;
-        f32 far;
+        f32 znear;
+        f32 zfar;
 
+        f32 fovy;
         // if perspective:
-        f32 aspect;
+        f32 aspectRatio;
         // if ortho:
         f32 xmag;
         f32 ymag;
@@ -41,10 +42,15 @@ class Camera2639 {
         Camera2639() : spot(0, 0, 0),
                        spotTarget(0, 0, 0),
                        RPY(0, 0, 0),
-                       RPYTarget(0, 0, 0) {this->mode = CAMERA_FREEMOVE};
+                       RPYTarget(0, 0, 0),
+                       znear(0.5f),
+                       zfar(50.0f),
+                       fovy(45.0f),
+                       aspectRatio((float)display_get_width() / (float)display_get_height())
+                           {this->mode = CAMERA_FREEMOVE;};
         Camera2639(tinygltf::Node &node, tinygltf::Camera &cam);
         Camera2639(f32 x, f32 y, f32 z) : spot(x, y, z), spotTarget(x, y, z) {
-            this->mode = CAMERA_FREEMOVE
+            this->mode = CAMERA_FREEMOVE;
         };
         void update();
 };

@@ -35,6 +35,7 @@ void Vector::operator =(std::initializer_list<float> that) {
     this->z = vec[2];
 }
 
+// todo: verify
 Vector::Vector(Quat& q) {
     this->x = 2.0f * (q.b * q.d - q.a * q.c);
     this->y = 2.0f * (q.c * q.d + q.a * q.b);

@@ -22,7 +22,7 @@ N64_CFLAGS += -Wno-missing-braces
 N64_CFLAGS += -Wno-int-conversion
 
 
-CXXFLAGS += $(WARNINGS) $(INCLUDES) $(DEFINES) --std=c++23
+CXXFLAGS += $(WARNINGS) $(INCLUDES) $(DEFINES) --std=c++23 -O2
 
 # replaces assets/ with filesystem/ in a cleaner way
 assetpipe = $(foreach file, $(1), $(addprefix filesystem/,$(subst assets/,,$(file))))
