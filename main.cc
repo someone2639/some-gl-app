@@ -20,8 +20,8 @@ extern int __rdpq_debug_log_flags;
 
 rdpq_font_t *fnt1;
 
-struct controller_data __attribute__((aligned(8))) gPressedButtons;
-struct controller_data __attribute__((aligned(8))) gHeldButtons;
+joypad_inputs_t __attribute__((aligned(8))) gPressedButtons;
+joypad_buttons_t __attribute__((aligned(8))) gHeldButtons;
 
 static surface_t zbuffer;
 
@@ -66,7 +66,7 @@ void render(Level2639 &level) {
     glEnable(GL_LIGHTING);
     static u32 lighttoggle = 0;
 
-    if (ContRead(0, L)) {
+    if (ContRead(0, l)) {
         lighttoggle ^= 1;
     }
 
@@ -136,7 +136,7 @@ int main() {
 
     gl_init();
 
-    controller_init();
+    joypad_init();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -162,6 +162,7 @@ int main() {
         myParms.height = box_height;
         myParms.wrap = WRAP_WORD;
 
+
     while (1) {
 
         // displayTimer.start();
@@ -170,9 +171,9 @@ int main() {
         // if (beats & 1) {
             // only do this at 30fps
             // TODO: move to a game tick
-            controller_scan();
-            gPressedButtons = get_keys_pressed();
-            gHeldButtons = get_keys_down();
+            joypad_poll();
+            gPressedButtons = joypad_get_inputs(JOYPAD_PORT_1);
+            gHeldButtons = joypad_get_buttons_pressed(JOYPAD_PORT_1);
 
             surface_t *disp = display_get();
             rdpq_attach(disp, &zbuffer);
@@ -182,6 +183,7 @@ int main() {
             sprintf(text, "FPS: %f\n", gFPS);
             debugf(text);
             // int nbytes = rdpq_text_print(&myParms, 1, (320-box_width)/2, (240-box_height)/2, text);
+
 
             rdpq_detach_show();
         // }

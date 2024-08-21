@@ -184,7 +184,7 @@ int NewText_Keyboard(char *text, char *var) {
 
     // // print_text_fmt_int(50, 50, "%d", sticklatch);
 
-    // if (NT_ReadController(A)) {
+    // if (NT_ReadController(a)) {
     //     if (kcur <= NewText_MAXKEYBOARDWIDTH) {
     //         kbuffer[kcur++] = epic[curX][curY * 2];
     //     }
@@ -193,7 +193,7 @@ int NewText_Keyboard(char *text, char *var) {
     //     // }
     // }
 
-    // if (NT_ReadController(B)) {
+    // if (NT_ReadController(b)) {
     //     if (kcur != 0) {
     //         kbuffer[--kcur] = 0;
     //     }
@@ -225,7 +225,7 @@ int NewText_RenderText(char *text) {
     // }
 
     NT_TextBuffer[NewText_TextSubCursor] = text[NewText_TextSubCursor - NewText_TextCursor];
-    if (NT_ReadController(A) && isUnskippable == FALSE) {
+    if (NT_ReadController(a) && isUnskippable == FALSE) {
         NT_SkipToEnd = 1;
     }
 
@@ -372,7 +372,7 @@ void NT_RenderMenu(u8 *cursor) {
     if (curpos > 3) curpos = 3;
 
     // // if cursor goto label
-    if (NT_ReadController(A)) {
+    if (NT_ReadController(a)) {
         NewText_Cursor = labels[curpos];
     }
 }
@@ -480,7 +480,7 @@ int NewText_Parse(u8 *scene) {
             subStackPtr = 0;
             s2d_colorstack_top = 0;
             NT_SkipToEnd = 0;
-            if (NT_ReadController(A) || NT_ReadController(B)) {
+            if (NT_ReadController(a) || NT_ReadController(b)) {
                 proceed = 1;
             }
             break;

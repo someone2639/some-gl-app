@@ -65,15 +65,15 @@ void CameraPosApply(Vector &v, f32 dist, f32 yaw, f32 pitch) {
 }
 
 void Camera2639::updateFreeMove() {
-    if (abs(ContReadHeld(0, x)) >= 14) {
-        if (ContReadHeld(0, x) > 0) {
+    if (abs(StickRead(x)) >= 14) {
+        if (StickRead(x) > 0) {
             CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         } else {
             CameraPosApply(this->spotTarget,  MV_SPD, this->RPY.yaw + 90, this->RPY.pitch);
         }
     }
-    if (abs(ContReadHeld(0, y)) >= 14) {
-        if (ContReadHeld(0, y) > 0) {
+    if (abs(StickRead(y)) >= 14) {
+        if (StickRead(y) > 0) {
             CameraPosApply(this->spotTarget,  MV_SPD, this->RPY.yaw, this->RPY.pitch);
         } else {
             CameraPosApply(this->spotTarget, -MV_SPD, this->RPY.yaw, this->RPY.pitch);
@@ -81,23 +81,23 @@ void Camera2639::updateFreeMove() {
     }
 
     // #define CAM_YAW (45)
-    if (ContReadHeld(0, C_right)) {
+    if (ContReadHeld(0, c_right)) {
         this->RPYTarget.yaw -= ROT_SPD;
     }
-    if (ContReadHeld(0, C_left)) {
+    if (ContReadHeld(0, c_left)) {
         this->RPYTarget.yaw += ROT_SPD;
     }
-    if (ContReadHeld(0, C_up)) {
+    if (ContReadHeld(0, c_up)) {
         this->RPYTarget.pitch -= ROT_SPD;
     }
-    if (ContReadHeld(0, C_down)) {
+    if (ContReadHeld(0, c_down)) {
         this->RPYTarget.pitch += ROT_SPD;
     }
 
-    if (ContReadHeld(0, A)) {
+    if (ContReadHeld(0, a)) {
         this->spotTarget.y += MV_SPD;
     }
-    if (ContReadHeld(0, B)) {
+    if (ContReadHeld(0, b)) {
         this->spotTarget.y -= MV_SPD;
     }
 
@@ -134,10 +134,10 @@ void Camera2639::update() {
         0,1,0
     );
 
-    if (ContReadHeld(0, A)) {
+    if (ContReadHeld(0, a)) {
         this->spotTarget.z += MV_SPD;
     }
-    if (ContReadHeld(0, B)) {
+    if (ContReadHeld(0, b)) {
         this->spotTarget.z -= MV_SPD;
     }
 

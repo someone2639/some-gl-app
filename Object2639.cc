@@ -337,7 +337,6 @@ Object2639::Object2639(std::string directory, Model &model, Scene &s) : Object26
         glNewList(this->_displaylist, GL_COMPILE);
         assert(glGetError() == 0);
 
-
         Node HeadNode;
 
         for (int i : s.nodes) {
