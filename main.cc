@@ -170,7 +170,7 @@ int main() {
 
     rdpq_fontstyle_t myStyle;
         myStyle.color = RGBA32(0xED, 0xAE, 0x49, 0xFF);
-    // rdpq_font_style(fnt1, 0, &myStyle);
+    rdpq_font_style(fnt1, 0, &myStyle);
     rdpq_text_register_font(FONT_PACIFICO, fnt1);
 
 
