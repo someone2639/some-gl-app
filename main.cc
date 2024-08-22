@@ -15,6 +15,10 @@ using namespace tinygltf;
 #include "camera.h"
 #include "Timer.h"
 
+enum {
+    FONT_PACIFICO = 1,
+};
+
 #define RDPQ_LOG_FLAG_SHOWTRIS       0x00000001
 extern int __rdpq_debug_log_flags;
 
@@ -162,6 +166,14 @@ int main() {
         myParms.height = box_height;
         myParms.wrap = WRAP_WORD;
 
+    rdpq_font_t *fnt1 = rdpq_font_load("rom:/fonts/Pacifico.font64");
+
+    rdpq_fontstyle_t myStyle;
+        myStyle.color = RGBA32(0xED, 0xAE, 0x49, 0xFF);
+    // rdpq_font_style(fnt1, 0, &myStyle);
+    rdpq_text_register_font(FONT_PACIFICO, fnt1);
+
+
 
     while (1) {
 
@@ -180,10 +192,20 @@ int main() {
             render(level);
 
             char text[50];
-            sprintf(text, "FPS: %f\n", gFPS);
-            debugf(text);
-            // int nbytes = rdpq_text_print(&myParms, 1, (320-box_width)/2, (240-box_height)/2, text);
+            sprintf(text, "FPS: %f;\n", gFPS);
+            // debugf(text);
 
+
+            disable_interrupts();
+            int nbytes = rdpq_text_print(
+                &myParms,
+                FONT_PACIFICO,
+                (320-box_width)/2,
+                (240-box_height)/2,
+                text
+            ).utf8_text_advance;
+            // int nbytes = rdpq_text_print(&myParms, 1, (320-box_width)/2, (240-box_height)/2, text);
+            enable_interrupts();
 
             rdpq_detach_show();
         // }
@@ -194,7 +216,6 @@ int main() {
             //     audio_write_end();
             // }
         // }
-
 
         beats ^= 1;
     }
